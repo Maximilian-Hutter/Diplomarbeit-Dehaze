@@ -2,7 +2,6 @@ from models import *
 import numpy as np
 import torch
 import torch.nn as nn
-import argparse
 import socket
 import torch.backends.cudnn as cudnn
 from torchsummary import summary

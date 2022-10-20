@@ -1,4 +1,3 @@
-from numpy.random.mtrand import random
 from torch.utils.data import Dataset
 from PIL import Image
 import torch

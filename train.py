@@ -1,11 +1,8 @@
-# based on VQGAN https://arxiv.org/pdf/2012.09841.pdf
-
 from data import ImageDataset
 from models import *
 import numpy as np
 import torch
 import torch.nn as nn
-import argparse
 import socket
 import torch.backends.cudnn as cudnn
 from torchsummary import summary
@@ -27,9 +24,9 @@ if __name__ == '__main__':
         "crop_size": None,
         "train_data_path": "C:/Data/dehaze/prepared/",
         "augment_data": False,
-        "epochs_haze": 20,
+        "epochs_haze": 100,
         "epochs_frida": 50,
-        "epochs_cityscape": 500,
+        "epochs_cityscape": 300,
         "batch_size": 1,
         "threads": 4,
         "height":144,
