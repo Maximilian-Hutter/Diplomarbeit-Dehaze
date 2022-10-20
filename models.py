@@ -1,0 +1,2 @@
+# best candidate visual detail:https://arxiv.org/pdf/2210.03061v1.pdf speed and dense fog: https://arxiv.org/pdf/2005.05999v1.pdf
+# could be possible to combine with https://arxiv.org/pdf/2111.09733v1.pdf?
