@@ -49,7 +49,7 @@ def print_info(epoch, epoch_loss,train_acc, dataloader):
         Accuracy = 100*train_acc / len(dataloader)
         writer.add_scalar('loss', epoch_loss, global_step=epoch)
         writer.add_scalar('accuracy',Accuracy, global_step=epoch)
-        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds \n".format(epoch, ((epoch_loss/2) / len(dataloader)), Accuracy, epoch_time))
+        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds /n".format(epoch, ((epoch_loss/2) / len(dataloader)), Accuracy, epoch_time))
 
 
 def crop_center(pil_img, crop_width, crop_height):
@@ -78,7 +78,7 @@ def save_allimg(generated_image, label, input, epoch):
     inp.save("trainimg/input"+ str(epoch) +".png")
 
 
-def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startnum = 0):
+def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startnum = 0, size= None, crop_size = None):
     files = os.listdir(path)
     if not os.path.isdir(outpath):
         os.mkdir(outpath)
@@ -91,9 +91,13 @@ def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startn
 
     for i,file in enumerate(BackgroundGenerator(tqdm(outfiles)), start=startnum):
             img = Image.open(path + file)
+            if size != None:
+                img = img.resize(size)
+            if crop_size != None:
+                img = crop_center(img, crop_size[0], crop_size[1])
             if numerate:
                 img.save(outpath + str(i) + ".png")
             else:
                 img.save(outpath + file)
 if __name__ == "__main__":
-    prepare_imgdatadir("C:/Data/dehaze/NH-HAZE/NH-HAZE/", "C:/Data/dehaze/prepared/NH_Haze/gt/" ,substring = "GT" ,numerate=True)
+    prepare_imgdatadir("C:/Data/dehaze/O-HAZE/# O-HAZY NTIRE 2018/hazy/", "C:/Data/dehaze/prepared/NH_Haze/input/" ,substring = "hazy" ,numerate=True,startnum = 55, crop_size=(1600,1200))
