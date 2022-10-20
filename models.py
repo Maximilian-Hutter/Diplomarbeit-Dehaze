@@ -1,2 +1,10 @@
-# best candidate visual detail:https://arxiv.org/pdf/2210.03061v1.pdf speed and dense fog: https://arxiv.org/pdf/2005.05999v1.pdf
-# could be possible to combine with https://arxiv.org/pdf/2111.09733v1.pdf?
+# combine base model: https://arxiv.org/pdf/2111.09733v1.pdf with large kernel structure https://arxiv.org/pdf/2209.01788v1.pdf
+import torch
+import torch.nn as nn
+
+class dehaze(nn.Module):
+    def __init__(self):
+        super(dehaze, self).__init__()
+
+    def forward(self, x):
+        return out
