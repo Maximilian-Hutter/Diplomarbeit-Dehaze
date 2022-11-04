@@ -1,2 +1,0 @@
-# using https://github.com/JetsonHacksNano/CSI-Camera/blob/master/simple_camera.py and https://gvasu.medium.com/faster-real-time-video-processing-using-multi-threading-in-python-8902589e1055
-import cv2
