@@ -48,9 +48,9 @@ if __name__ == '__main__':
     size = (hparams["height"], hparams["width"])
 
     print('==> Loading Datasets')
-    dataloader_frida = DataLoader(ImageDataset(hparams["train_data_path"] + "frida/",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
-    dataloader_nh_haze = DataLoader(ImageDataset(hparams["train_data_path"] + "NH_Haze/",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
-    dataloader_cityscapes = DataLoader(ImageDataset(hparams["train_data_path"] + "cityscapes/",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
+    dataloader_frida = DataLoader(ImageDataset(hparams["train_data_path"] + "frida",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
+    dataloader_haze = DataLoader(ImageDataset(hparams["train_data_path"] + "Haze",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
+    dataloader_cityscapes = DataLoader(ImageDataset(hparams["train_data_path"] + "cityscapes",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
 
     # define the Network
     Net = dehaze()
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         epoch_time = time.time()
         correct = 0
 
-        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_nh_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
+        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
 
             start_time = time.time()
             img = Variable(imgs["img"].type(Tensor))
@@ -130,7 +130,7 @@ if __name__ == '__main__':
         if (epoch+1) % (hparams["snapshots"]) == 0:
             myutils.checkpointGenerate(epoch, hparams, Net)
 
-        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_nh_haze)
+        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_haze)
 
 
 
