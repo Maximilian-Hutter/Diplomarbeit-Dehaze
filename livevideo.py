@@ -31,7 +31,7 @@ if __name__ == '__main__':
     proc.start()
     while True:
         frame = q.get()
-        #outframe = dehaze(frameinfo[1])
+        #outframe = Dehaze(frameinfo[1])
         outframe = frame
         cv2.imshow('frame', outframe)
         if cv2.waitKey(1) == ord('q'):
