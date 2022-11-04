@@ -1,4 +1,5 @@
 from models import *
+from basic_models import *
 import numpy as np
 import torch
 import torch.nn as nn
@@ -22,7 +23,8 @@ cudnn.benchmark = True
 
 # defining shapes
 
-Net = dehaze().cuda()
+Net = CEFN(3,3,2, (3,144,144)).cuda()
+
 
 
 summary(Net, (3, 144, 144))

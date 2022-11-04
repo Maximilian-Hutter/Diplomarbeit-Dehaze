@@ -26,9 +26,20 @@ class MHA(nn.Module):
         super(MHA, self).__init__()
 
     def forward(self,x):
+        res = x
+
+        x1 = conv1(x)
+        x2 = conv2(x)
+        x = torch.add(x1, x2)
+        x = torch.add(res,x)
+        x = lrelu(x)
+        x = convsha(x)
+        x = SHA(x)
+        out = torch.add(res,x)
+
         return out
 
-class MHAC(nn.Moudle):
+class MHAC(nn.Module):
     def __init__(self) -> None:
         super(MHAC, self).__init__()
     
