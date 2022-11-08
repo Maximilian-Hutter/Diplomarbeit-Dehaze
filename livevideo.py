@@ -1,6 +1,7 @@
 # using https://github.com/JetsonHacksNano/CSI-Camera/blob/master/simple_camera.py and https://gvasu.medium.com/faster-real-time-video-processing-using-multi-threading-in-python-8902589e1055
 import cv2
 from threading import Thread
+import time
 # from pycoral.adapters import common
 # from pycoral.utils.dataset import read_label_file
 # from pycoral.utils.edgetpu import make_interpreter
@@ -21,6 +22,9 @@ class ImageProcessing:
 
     # method to output the processed frame
     def process(self, frame):
+
+        # simulate process time
+        time.sleep(0.05)
 
         return self.inference(self.transforms(frame))
 
@@ -70,24 +74,45 @@ class CamStream:
     def stop(self):
         self.stopped = True
 
+class UserInteraction:
+    def __init__(self):
+        self.stopped = False
+
+        self.t = Thread(target=self.stop_programm, args=()) # maybe use multiprocessing instead of threading
+        self.t.daemon = True
+
+    def start(self):
+        self.t.start()
+
+    def stop_programm(self):
+        while True:
+            key = cv2.waitKey(1)
+            if key == ord('q'):
+                break
+
+        self.stopped = True
+
 if __name__ == "__main__":
     webcam_stream = CamStream(stream_id=0) # 0 id for main camera
     webcam_stream.start()
     image_processing = ImageProcessing()
+    user_interaction = UserInteraction()
+    user_interaction.start()
 
     while True :
-        if webcam_stream.stopped is True:
+        if user_interaction.stopped is True:
             break
-        else :
-            frame = webcam_stream.read()
-        
-        frame = image_processing.process(frame)
+        else:
+            if webcam_stream.stopped is True:
+                break
+            else :
+                frame = webcam_stream.read()
+            
+            frame = image_processing.process(frame)
 
-        cv2.imshow('frame' , frame)
+            cv2.imshow('frame' , frame)
 
-        key = cv2.waitKey(1)
-        if key == ord('q'):
-            break
+
 
     webcam_stream.stop()
     cv2.destroyAllWindows()
