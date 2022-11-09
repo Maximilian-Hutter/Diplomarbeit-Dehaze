@@ -4,6 +4,7 @@
 from numpy import outer
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from basic_models import *
 
 class CoT(nn.Module): # https://arxiv.org/pdf/2107.12292v1.pdf change BN to IN
@@ -21,28 +22,35 @@ class TailModule(nn.Module):
         return out
 
 class MHA(nn.Module):
-    def __init__(self):
+    def __init__(self, in_feat, out_feat, num_parallel_conv, kernel_list, pad_list, groups):
         super(MHA, self).__init__()
+        self.num_parallel_conv = num_parallel_conv
+        self.kernel_list = kernel_list
+        self.pad_list = pad_list
         self.parallel_conv = []
         
-        for i in num_parallel_conv:
+        for i,_ in enumerate(num_parallel_conv, start = 0):
             kernel = kernel_list[i]
             pad = pad_list[i]
-            self.parallel_conv.append(DLKCB(in_feat, out_feat, kernel, pad=pad))
+            dlkcb = DLKCB(in_feat, out_feat, kernel, pad=pad)
+            dlkcb.cuda()
+            self.parallel_conv.append(dlkcb)
 
         self.lrelu = nn.LeakyReLU()
-        self.convsha = ConvBlock()
+        self.convsha = ConvBlock(in_feat, out_feat, pad=1)
+        self.sha = SHA(in_feat, out_feat, groups)
 
     def forward(self,x):
         res = x
-
+        par_out = x
         for i in self.num_parallel_conv:
-            par_out = self.parallel_conv[i]
+            conv = self.parallel_conv[i]
+            par_out = conv(par_out)
             x = torch.add(par_out,x)
 
         x = self.lrelu(x)
         x = self.convsha(x)
-        x = SHA(x)
+        x = self.sha(x)
         out = torch.add(res,x)
 
         return out
@@ -55,22 +63,24 @@ class MHAC(nn.Module):
         return out
         
 class SHA(nn.Module):
-    def __init__(self):
+    def __init__(self, in_feat, out_feat, groups):
         super(SHA,self).__init__()
+        self.groups = groups
 
         # might be wrong
-        self.avgh = nn.AvgPool2d((1,0)) # kernel of size 1 horizontaly and 0 verticaly
-        self.maxh = nn.MaxPool2d((1,0))
+        self.avgh = nn.AvgPool2d((in_feat,1),stride=1) # kernel of size 1 horizontaly and 0 verticaly
+        self.maxh = nn.MaxPool2d((in_feat,1),stride=1)
 
-        self.avgv = nn.AvgPool2d((0,1))
-        self.maxv = nn.MaxPool2d((0,1))
+        self.avgv = nn.AvgPool2d((1,in_feat),stride=1)
+        self.maxv = nn.MaxPool2d((1,in_feat),stride=1)
+        #
 
-        self.shuffle = nn.ChannelShuffle()
+        self.shuffle = nn.ChannelShuffle(groups)
 
         self.relu6 = nn.ReLU6()
 
-        self.conv1 = ConvBlock()
-        self.conv2 = ConvBlock()
+        self.conv1 = ConvBlock(in_feat,out_feat, pad=1)
+        self.conv2 = ConvBlock(in_feat,out_feat, pad=1)
 
         self.sigmoid = nn.Sigmoid()
 
@@ -80,18 +90,25 @@ class SHA(nn.Module):
         havg = self.avgh(x)
         hmax = self.maxh(x)
         h = torch.add(havg, hmax)
+   
 
         vavg = self.avgv(x)
         vmax = self.maxv(x)
         v = torch.add(vavg, vmax)
 
-        x = torch.cat((h,v))
 
-        x = self.shuffle(x)
+        h = F.pad(h, (0,0,1,1), "constant",0)
+        v = F.pad(v, (1,1), "constant",0)
+        x = torch.cat((h,v))
+        x = x.to("cpu")
+        x = self.shuffle(x) # cuda error
+        x = x.to("cuda")
+        print(x.device)
+        # put cuda back to cpu
         x = self.conv1(x)
         x = self.relu6(x)
 
-        x = torch.split(x)
+        x = torch.split(x,2)
         x1 = x[0]
         x2 = x[1]
 

@@ -23,8 +23,8 @@ cudnn.benchmark = True
 
 # defining shapes
 
-Net = CEFN(3,3,2, (3,144,144)).cuda()
-
+#Net = MHA(in_feat= 3, out_feat = 3, num_parallel_conv=range(3), kernel_list=[3,5,7,9], pad_list=[2,6,12,20], groups=10).cuda()
+Net = SHA(3,3,3)
 
 
 summary(Net, (3, 144, 144))
