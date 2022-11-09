@@ -116,4 +116,4 @@ def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startn
                 img.save(outpath + file)
 
 if __name__ == "__main__":
-    prepare_imgdatadir("C:/Data/dehaze/leftImg8bit_trainvaltest/leftImg8bit/train", "C:/Data/dehaze/prepared/cityscapes/input/" ,substring = ".png" ,numerate=True,startnum = 0, crop_size=(2048,1024), multiple_dirs=True)
+    prepare_imgdatadir("C:/Data/dehaze/leftImg8bit_trainval_foggyDBF/leftImg8bit_foggyDBF/train", "C:/Data/dehaze/prepared/cityscapes/medium/" ,substring = "0.01" ,numerate=True,startnum = 0, crop_size=(2048,1024), multiple_dirs=True)

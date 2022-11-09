@@ -53,7 +53,7 @@ if __name__ == '__main__':
     dataloader_cityscapes = DataLoader(ImageDataset(hparams["train_data_path"] + "cityscapes",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
 
     # define the Network
-    Net = dehaze()
+    Net = Dehaze()
 
     # print Network parameters
     pytorch_params = sum(p.numel() for p in Net.parameters())

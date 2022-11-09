@@ -12,12 +12,13 @@ class ImageProcessing:
         model_path = None
 
     # method to create dehazed frame
-    def inference(self):
+    def inference(self, frame):
+        self.frame = frame
         return self.frame
 
     # method to make frame to TF lite compatible
-    def transforms(self):
-
+    def transforms(self, frame):
+        self.frame = frame
         return self.frame
 
     # method to output the processed frame
@@ -88,27 +89,28 @@ class UserInteraction:
         while True:
             key = cv2.waitKey(1)
             if key == ord('q'):
+                self.stopped = True
                 break
 
-        self.stopped = True
+
 
 if __name__ == "__main__":
     webcam_stream = CamStream(stream_id=0) # 0 id for main camera
     webcam_stream.start()
-    image_processing = ImageProcessing()
-    user_interaction = UserInteraction()
-    user_interaction.start()
+    #image_processing = ImageProcessing()
+    #user_interaction = UserInteraction()
+    #user_interaction.start()
 
     while True :
-        if user_interaction.stopped is True:
-            break
-        else:
+        #if user_interaction.stopped is True:
+        #    break
+        #else:
             if webcam_stream.stopped is True:
                 break
             else :
                 frame = webcam_stream.read()
             
-            frame = image_processing.process(frame)
+            #frame = image_processing.process(frame)
 
             cv2.imshow('frame' , frame)
 
