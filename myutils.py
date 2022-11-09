@@ -78,19 +78,34 @@ def save_allimg(generated_image, label, input, epoch):
     inp.save("trainimg/input"+ str(epoch) +".png")
 
 
-def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startnum = 0, size= None, crop_size = None):
-    files = os.listdir(path)
+def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startnum = 0, size= None, crop_size = None, multiple_dirs = False):
     if not os.path.isdir(outpath):
         os.mkdir(outpath)
+    all_files = []
+    if multiple_dirs is True:
+        dirs = os.listdir(path)
+        for dir in dirs:
+            files = os.listdir(path + "/" + dir)
+            outfiles = []
+            if substring != None:
+                for file in files:
+                    if substring in file:
+                        outfiles.append(file)
+            for file in outfiles:
+                all_files.append(dir + "/" + file)
+    else:
+        files = os.listdir(path)
+        outfiles = []
+        if substring != None:
+            for file in files:
+                if substring in file:
+                    outfiles.append(file)
 
-    outfiles = []
-    if substring != None:
-        for file in files:
-            if substring in file:
-                outfiles.append(file)
+        all_files = outfiles
 
-    for i,file in enumerate(BackgroundGenerator(tqdm(outfiles)), start=startnum):
-            img = Image.open(path + file)
+
+    for i,file in enumerate(BackgroundGenerator(tqdm(all_files), max_prefetch=5), start=startnum):
+            img = Image.open(path + "/" + file)
             if size != None:
                 img = img.resize(size)
             if crop_size != None:
@@ -99,5 +114,6 @@ def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startn
                 img.save(outpath + str(i) + ".png")
             else:
                 img.save(outpath + file)
+
 if __name__ == "__main__":
-    prepare_imgdatadir("C:/Data/dehaze/O-HAZE/# O-HAZY NTIRE 2018/hazy/", "C:/Data/dehaze/prepared/NH_Haze/input/" ,substring = "hazy" ,numerate=True,startnum = 55, crop_size=(1600,1200))
+    prepare_imgdatadir("C:/Data/dehaze/leftImg8bit_trainvaltest/leftImg8bit/train", "C:/Data/dehaze/prepared/cityscapes/input/" ,substring = ".png" ,numerate=True,startnum = 0, crop_size=(2048,1024), multiple_dirs=True)
