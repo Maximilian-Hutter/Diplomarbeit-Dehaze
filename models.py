@@ -15,10 +15,21 @@ class CoT(nn.Module): # https://arxiv.org/pdf/2107.12292v1.pdf change BN to IN
         return out
 
 class TailModule(nn.Module):
-    def __init__(self):
+    def __init__(self, in_feat, out_feat, kernel, padw, padh):
         super(TailModule, self).__init__()
+        self.pad = (padw,padw,padh,padh)
+        self.dlkcb = DLKCB(in_feat, out_feat, kernel)
+        self.elu = nn.ELU()
+        self.conv2 = ConvBlock(out_feat, out_feat, 3)
+        self.tanh = nn.Tanh()
     
     def forward(self,x):
+        x = F.pad(x,self.pad, "constant")
+        x = self.dlkcb(x)
+        x = self.elu(x)
+        x = self.conv2(x)
+        out = self.tanh(x)
+
         return out
 
 class MHA(nn.Module):
