@@ -100,10 +100,11 @@ class SHA(nn.Module):
         h = F.pad(h, (0,0,1,1), "constant",0)
         v = F.pad(v, (1,1), "constant",0)
         x = torch.cat((h,v))
+        # put x to cpu because channel_shuffle no cuda backend
         x = x.to("cpu")
         x = self.shuffle(x) # cuda error
         x = x.to("cuda")
-        print(x.device)
+
         # put cuda back to cpu
         x = self.conv1(x)
         x = self.relu6(x)
@@ -117,7 +118,9 @@ class SHA(nn.Module):
         
         out = torch.mul(x1,x2)
         out = self.sigmoid(out)
+
         out = torch.mul(out,res)
+
 
         return out
 
