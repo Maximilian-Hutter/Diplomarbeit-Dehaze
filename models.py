@@ -139,7 +139,22 @@ class AdaptiveFeatureFusion(nn.Module):
     def __init__(self):
         super(AdaptiveFeatureFusion, self).__init__()
 
-    def forward(self,x):
+        self.dlkcb = DLKCB(in_feat, out_feat, kernel)
+        self.elu = nn.ELU()
+        self.sha = SHA()
+        self.conv1 = ConvBlock()
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self,x, hazy,pseudo):
+        dense = torch.cat(hazy,pseudo)
+        dense = self.dlkcb(dense)
+        dense = self.elu(dense)
+        dense = self.sha(dense)
+        dense = self.conv1(dense)
+        dense = self.sigmoid(dense)
+
+        out = torch.mul(x,dense)
+        
         return out
 
 class DensityEstimation(nn.Module):
