@@ -136,13 +136,13 @@ class SHA(nn.Module):
         return out
 
 class AdaptiveFeatureFusion(nn.Module):
-    def __init__(self):
+    def __init__(self, in_feat, inner_feat, kernel, groups):
         super(AdaptiveFeatureFusion, self).__init__()
 
-        self.dlkcb = DLKCB(in_feat, out_feat, kernel)
+        self.dlkcb = DLKCB(in_feat, inner_feat, kernel)
         self.elu = nn.ELU()
-        self.sha = SHA()
-        self.conv1 = ConvBlock()
+        self.sha = SHA(inner_feat,inner_feat,groups)
+        self.conv1 = ConvBlock(inner_feat, 1)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self,x, hazy,pseudo):

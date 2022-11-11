@@ -62,7 +62,7 @@ class CEFN(nn.Module):
         return out
         
 class ConvBlock(nn.Module):
-    def __init__(self, in_feat, out_feat,kernel_size = 3, stride = 1, pad = 0, dilation = 1, groups = 1):
+    def __init__(self, in_feat, out_feat,kernel_size = 3, stride = 1, pad = 1, dilation = 1, groups = 1):
         super().__init__()
 
         self.conv = nn.Conv2d(in_feat, out_feat, kernel_size, stride, pad, dilation, groups)

@@ -24,25 +24,25 @@ cudnn.benchmark = True
 # defining shapes
 
 #Net = MHA(in_feat= 3, out_feat = 3, num_parallel_conv=range(3), kernel_list=[3,5,7,9], pad_list=[2,6,12,20], groups=3).cuda()
-Net = TailModule(64,3,9, 41, 41).cuda()
+Net = AdaptiveFeatureFusion(3,3,3,3).cuda()
 
 
-summary(Net, (64, 512, 512))
+#summary(Net, (3, 512, 512))
 
-# pytorch_params = sum(p.numel() for p in Net.parameters())
-# print("Network parameters: {}".format(pytorch_params))
+pytorch_params = sum(p.numel() for p in Net.parameters())
+print("Network parameters: {}".format(pytorch_params))
 
-# def print_network(net):
-#     num_params = 0
-#     for param in net.parameters():
-#         num_params += param.numel()
-#     print(net)
-#     print('Total number of parameters: %d' % num_params)
+def print_network(net):
+    num_params = 0
+    for param in net.parameters():
+        num_params += param.numel()
+    print(net)
+    print('Total number of parameters: %d' % num_params)
 
-# print('===> Building Model ')
-# Net = Net
+print('===> Building Model ')
+Net = Net
 
 
-# print('----------------Network architecture----------------')
-# print_network(Net)
-# print('----------------------------------------------------')
+print('----------------Network architecture----------------')
+print_network(Net)
+print('----------------------------------------------------')
