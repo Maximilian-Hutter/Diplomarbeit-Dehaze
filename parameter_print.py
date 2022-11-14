@@ -23,7 +23,7 @@ cudnn.benchmark = True
 
 # defining shapes
 
-#Net = Shallow(3, 256, 8, 3, kernel_list=[3,5,7], pad_list=[4,12,24]).cuda()
+Net = Shallow(3, 256, 8, 1, kernel_list=[3,5,7], pad_list=[4,12,24]).cuda()
 
 
 summary(Net, (3, 64, 64))

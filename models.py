@@ -199,12 +199,15 @@ class SHA(nn.Module):
 
 class AdaptiveFeatureFusion(nn.Module):
     def __init__(self, in_feat, inner_feat, out_feat, kernel, groups):
+        super(AdaptiveFeatureFusion, self).__init__()
         # image was of density estimation
-        None
+
+        self.sig1 = nn.Sigmoid()
+        self.sig2 = nn.Sigmoid()
 
     def forward(self,x, y):
 
-
+        out = torch.add(self.sig1(x), self.sig2(y))
         
         return out
 
