@@ -23,10 +23,10 @@ cudnn.benchmark = True
 
 # defining shapes
 
-Net = DensityEstimation(6, 3, 4, 0, 0).cuda()
+Net = Dehaze().cuda()
 
 
-summary(Net, (3, 256, 256))
+summary(Net, (3, 64, 64))
 
 # pytorch_params = sum(p.numel() for p in Net.parameters())
 # print("Network parameters: {}".format(pytorch_params))

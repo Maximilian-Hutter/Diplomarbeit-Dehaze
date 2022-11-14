@@ -98,8 +98,8 @@ class TransposedUpsample(nn.Module):
     def forward(self,x):
         if self.use_dlkcb is True:
             x = self.dlkcb(x)
-        print(x.shape)
+
         out = self.up(x)
-        print(out.shape)
+
 
         return out

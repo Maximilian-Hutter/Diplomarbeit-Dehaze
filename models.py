@@ -223,9 +223,9 @@ class DensityEstimation(nn.Module):
         self.conv1 = ConvBlock(first_conv_feat, 1, 3)
         self.sigmoid = nn.Sigmoid()
 
-    def forward(self,x):
+    def forward(self,x, y):
         res = x
-        x = torch.cat((x,x), dim = 1) # might be wrong dim
+        x = torch.cat((x,y), dim = 1) # might be wrong dim
         x = self.dlkcb(x)
         x = self.elu(x)
         x = self.sha(x)
@@ -269,9 +269,7 @@ class Shallow(nn.Module):
 
         x = self.mhacblock(x)
 
-        print(x.shape)
         x = self.up1(x)
-        print(x.shape)
         x = torch.add(x, res2)
         x = self.sha3(x)
         x = self.up2(x)
@@ -287,8 +285,9 @@ class Shallow(nn.Module):
 class Deep(nn.Module):
     def __init__(self, in_feat, inner_feat, out_feat, num_mhablock, num_parallel_conv, kernel_list, pad_list):
         super(Deep,self).__init__()
-        self.conv = ConvBlock(in_feat, inner_feat)
+        self.conv = ConvBlock(in_feat, in_feat)
         self.aff = AdaptiveFeatureFusion()
+        self.conv1 = ConvBlock(in_feat, inner_feat)
 
         m = []
         for i in range(num_mhablock):
@@ -302,13 +301,14 @@ class Deep(nn.Module):
 
         x = self.conv(x)
         x = self.aff(x, dense)
+        x = self.conv1(x)
         x = self.mhablocks(x)
         out = self.tail(x)
 
         return out
 
 class Dehaze(nn.Module):
-    def __init__(self, mhac_filter, mha_filter,num_mhablock,num_mhac, num_parallel_conv, kernel_list, pad_list):
+    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24]):
         super(Dehaze, self).__init__()
 
         self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list) # filter 256
@@ -321,6 +321,7 @@ class Dehaze(nn.Module):
         pseudo, shares = self.shallow(hazy)
         density = self.dense(pseudo, hazy)
         density = torch.mul(density, shares)
+
 
         x = self.aff(pseudo, hazy)
         x = self.deep(x, density)
