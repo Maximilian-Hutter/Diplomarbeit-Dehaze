@@ -24,10 +24,10 @@ cudnn.benchmark = True
 # defining shapes
 
 #Net = MHA(in_feat= 3, out_feat = 3, num_parallel_conv=range(3), kernel_list=[3,5,7,9], pad_list=[2,6,12,20], groups=3).cuda()
-Net = DensityEstimation(3, 3, 4, 4, 4).cuda()
+Net = CoT(64, 3).cuda()
 
 
-summary(Net, (3, 256, 256))
+summary(Net, (64, 256, 256))
 
 # pytorch_params = sum(p.numel() for p in Net.parameters())
 # print("Network parameters: {}".format(pytorch_params))

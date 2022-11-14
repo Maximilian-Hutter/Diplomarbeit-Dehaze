@@ -6,13 +6,48 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from basic_models import *
+# from fightingcv_attention.attention.CoTAttention import *
 
-class CoT(nn.Module): # https://arxiv.org/pdf/2107.12292v1.pdf change BN to IN
-    def __init__(self) -> None:
-        super(CoT, self).__init__()
+class CoT(nn.Module):
+    def __init__(self, in_feat=512,kernel=3):
+        super().__init__()
+        self.in_feat=in_feat
+        self.kernel_size=kernel
 
-    def forward(self,x):
-        return out
+        self.key_embed=nn.Sequential(
+            nn.Conv2d(in_feat,in_feat,kernel_size=kernel,padding=kernel//2,groups=4,bias=False),
+            nn.InstanceNorm2d(in_feat),
+            nn.ELU()
+        )
+        self.value_embed=nn.Sequential(
+            nn.Conv2d(in_feat,in_feat,1,bias=False),
+            nn.InstanceNorm2d(in_feat)
+        )
+
+        factor=4
+        self.attention_embed=nn.Sequential(
+            nn.Conv2d(2*in_feat,2*in_feat//factor,1,bias=False),
+            nn.InstanceNorm2d(2*in_feat//factor), # BN to IN
+            nn.ELU(), # ReLU to ELU
+            nn.Conv2d(2*in_feat//factor,kernel*kernel*in_feat,1)
+        )
+
+
+    def forward(self, x):   # modified from xmu-xiaoma666/External-Attention-pytorch
+
+        bs,c,h,w=x.shape
+        k1=self.key_embed(x) #bs,c,h,w
+        v=self.value_embed(x).view(bs,c,-1) #bs,c,h,w
+
+        y=torch.cat((k1,x),dim=1) #bs,2c,h,w
+        att=self.attention_embed(y) #bs,c*k*k,h,w
+        att=att.reshape(bs,c,self.kernel_size*self.kernel_size,h,w)
+        att=att.mean(2,keepdim=False).view(bs,c,-1) #bs,c,h*w
+        k2=F.softmax(att,dim=-1)*v
+        k2=k2.view(bs,c,h,w)
+
+        return k1+k2
+
 
 class TailModule(nn.Module):
     def __init__(self, in_feat, out_feat, kernel, padw, padh):
