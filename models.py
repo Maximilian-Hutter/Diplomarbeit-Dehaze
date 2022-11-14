@@ -199,22 +199,12 @@ class SHA(nn.Module):
 
 class AdaptiveFeatureFusion(nn.Module):
     def __init__(self, in_feat, inner_feat, out_feat, kernel, groups):
-        super(AdaptiveFeatureFusion, self).__init__()
-
-        self.dlkcb = DLKCB(in_feat, inner_feat, kernel, pad=4)
-        self.elu = nn.ELU()
-        self.sha = SHA(inner_feat,inner_feat,groups)
-        self.conv1 = ConvBlock(inner_feat, out_feat)
-        self.sigmoid = nn.Sigmoid()
+        # image was of density estimation
+        None
 
     def forward(self,x, y):
 
-        x = torch.cat((x,y), dim = 1) # might be wrong dim
-        x = self.dlkcb(x)
-        x = self.elu(x)
-        x = self.sha(x)
-        x = self.conv1(x)
-        out = self.sigmoid(x)
+
         
         return out
 
@@ -224,17 +214,19 @@ class DensityEstimation(nn.Module):
 
         # path # conv -> reflective pad, -> sha -> conv -> sigmoid
         self.dlkcb = DLKCB(in_feat, first_conv_feat, kernel)
+        self.elu = nn.ELU()
         self.pad = nn.ReflectionPad2d((padw,padw,padh,padh))
         self.sha = SHA(first_conv_feat, first_conv_feat, groups)
-        self.conv = ConvBlock(first_conv_feat, 1, 3)
+        self.conv1 = ConvBlock(first_conv_feat, 1, 3)
         self.sigmoid = nn.Sigmoid()
 
-    def forward(self,x):
+    def forward(self,x, y):
         res = x
+        x = torch.cat((x,y), dim = 1) # might be wrong dim
         x = self.dlkcb(x)
-        x = self.pad(x)
+        x = self.elu(x)
         x = self.sha(x)
-        x = self.conv(x)
+        x = self.conv1(x)
         out = self.sigmoid(x)
 
         out = torch.mul(out, res)
@@ -289,10 +281,25 @@ class Shallow(nn.Module):
         return out
 
 class Deep(nn.Module):
-    def __init__(self):
+    def __init__(self, in_feat, inner_feat, out_feat, num_mhablock, num_parallel_conv, kernel_list, pad_list):
         super(Deep,self).__init__()
-    
-    def forward(self,x):
+        self.conv = ConvBlock(in_feat, inner_feat)
+        self.aff = AdaptiveFeatureFusion(inner_feat, inner_feat, inner_feat, 3, inner_feat)
+
+        m = []
+        for i in range(num_mhablock):
+            m.append(MHA(inner_feat, inner_feat, num_parallel_conv, kernel_list, pad_list, 16))
+
+        self.mhablocks = nn.Sequential(*m)
+
+        self.tail = TailModule(inner_feat, out_feat, 3, 0, 0)
+
+    def forward(self,x, dense):
+
+        x = self.conv(x)
+        x = self.aff()
+
+
         return out
 
 class Dehaze(nn.Module):
