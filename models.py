@@ -223,9 +223,9 @@ class DensityEstimation(nn.Module):
         self.conv1 = ConvBlock(first_conv_feat, 1, 3)
         self.sigmoid = nn.Sigmoid()
 
-    def forward(self,x, y):
+    def forward(self,x):
         res = x
-        x = torch.cat((x,y), dim = 1) # might be wrong dim
+        x = torch.cat((x,x), dim = 1) # might be wrong dim
         x = self.dlkcb(x)
         x = self.elu(x)
         x = self.sha(x)
@@ -277,11 +277,12 @@ class Shallow(nn.Module):
         x = self.up2(x)
         x = torch.add(x,res1)
         x = self.sha4(x)
+        shares = x
 
         out = self.tail(x)
 
         out = torch.add(out, res)
-        return out
+        return out, shares
 
 class Deep(nn.Module):
     def __init__(self, in_feat, inner_feat, out_feat, num_mhablock, num_parallel_conv, kernel_list, pad_list):
@@ -307,8 +308,23 @@ class Deep(nn.Module):
         return out
 
 class Dehaze(nn.Module):
-    def __init__(self):
+    def __init__(self, mhac_filter, mha_filter,num_mhablock,num_mhac, num_parallel_conv, kernel_list, pad_list):
         super(Dehaze, self).__init__()
 
-    def forward(self, x):
-        return out
+        self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list) # filter 256
+        self.dense = DensityEstimation(6,3, 4, 0, 0)
+        self.aff = AdaptiveFeatureFusion()
+        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list) # filter 16
+
+    def forward(self, hazy):
+
+        pseudo, shares = self.shallow(hazy)
+        density = self.dense(pseudo, hazy)
+        density = torch.mul(density, shares)
+
+        x = self.aff(pseudo, hazy)
+        x = self.deep(x, density)
+        out = torch.add(x, hazy)
+        out = torch.add(x, pseudo)
+
+        return out, pseudo
