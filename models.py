@@ -119,7 +119,7 @@ class MHAC(nn.Module):
         return out
         
 class SHA(nn.Module):
-    def __init__(self, in_feat, out_feat, groups, kernel = 3):
+    def __init__(self, in_feat, out_feat, groups, kernel = 3, downsample = False):
         super(SHA,self).__init__()
         self.groups = groups
 
@@ -135,8 +135,13 @@ class SHA(nn.Module):
 
         self.relu6 = nn.ReLU6()
 
+        if downsample is True:
+            stride = 2
+        else: 
+            stride = 1
+
         self.conv1 = ConvBlock(in_feat,out_feat, pad=1)
-        self.conv2 = ConvBlock(in_feat,out_feat, pad=1)
+        self.conv2 = ConvBlock(in_feat,out_feat, stride = stride, pad=1)
 
         self.sigmoid = nn.Sigmoid()
 
@@ -177,7 +182,6 @@ class SHA(nn.Module):
         out = self.sigmoid(out)
 
         out = torch.mul(out,res)
-
 
         return out
 

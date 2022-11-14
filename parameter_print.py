@@ -24,7 +24,7 @@ cudnn.benchmark = True
 # defining shapes
 
 #Net = MHA(in_feat= 3, out_feat = 3, num_parallel_conv=range(3), kernel_list=[3,5,7,9], pad_list=[2,6,12,20], groups=3).cuda()
-Net = MHAC(64, 64, range(3), [3,5,7], [2,6,12], 4).cuda()
+Net = SHA(64, 64, 4, 3, True).cuda()
 
 
 summary(Net, (64, 128, 128))
