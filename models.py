@@ -110,7 +110,7 @@ class MHAC(nn.Module):
 
         self.mha = MHA(in_feat, in_feat, num_parallel_conv, kernel_list, pad_list, groups)
         self.cot = CoT(in_feat)
-        self.aff = AdaptiveFeatureFusion(in_feat * 2, inner_feat, out_feat, kernel, groups)
+        self.aff = AdaptiveFeatureFusion()
 
     def forward(self,x):
 
@@ -198,7 +198,7 @@ class SHA(nn.Module):
         return out
 
 class AdaptiveFeatureFusion(nn.Module):
-    def __init__(self, in_feat, inner_feat, out_feat, kernel, groups):
+    def __init__(self):
         super(AdaptiveFeatureFusion, self).__init__()
         # image was of density estimation
 
@@ -287,7 +287,7 @@ class Deep(nn.Module):
     def __init__(self, in_feat, inner_feat, out_feat, num_mhablock, num_parallel_conv, kernel_list, pad_list):
         super(Deep,self).__init__()
         self.conv = ConvBlock(in_feat, inner_feat)
-        self.aff = AdaptiveFeatureFusion(inner_feat, inner_feat, inner_feat, 3, inner_feat)
+        self.aff = AdaptiveFeatureFusion()
 
         m = []
         for i in range(num_mhablock):
@@ -300,8 +300,9 @@ class Deep(nn.Module):
     def forward(self,x, dense):
 
         x = self.conv(x)
-        x = self.aff()
-
+        x = self.aff(x, dense)
+        x = self.mhablocks(x)
+        out = self.tail(x)
 
         return out
 
