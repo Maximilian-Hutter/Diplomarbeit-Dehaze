@@ -103,18 +103,17 @@ class MHA(nn.Module):
         return out
 
 class MHAC(nn.Module):
-    def __init__(self) -> None:
+    def __init__(self, in_feat, inner_feat, num_parallel_conv, kernel_list, pad_list, groups, kernel = 3):
         super(MHAC, self).__init__()
 
-        self.mha = MHA()
-        self.cot = CoT()
-        self.aff = AdaptiveFeatureFusion()
+        self.mha = MHA(in_feat, in_feat, num_parallel_conv, kernel_list, pad_list, groups)
+        self.cot = CoT(in_feat)
+        self.aff = AdaptiveFeatureFusion(in_feat * 2, inner_feat, kernel, groups)
 
     def forward(self,x):
 
         mhaout = self.mha(x)
         cotout = self.cot(x)
-
         out = self.aff(mhaout, cotout)
     
         return out
@@ -143,7 +142,6 @@ class SHA(nn.Module):
 
     def forward(self,x):
 
-        print(x.shape)
         res = x
         havg = self.avgh(x)
         hmax = self.maxh(x)
@@ -157,8 +155,7 @@ class SHA(nn.Module):
 
         h = F.pad(h, (0,0,1,1), "constant",0)
         v = F.pad(v, (1,1), "constant",0)
-        print(h.shape)
-        print(v.shape)
+
         x = torch.cat((h,v))
         # put x to cpu because channel_shuffle no cuda backend
         x = x.to("cpu")
@@ -196,7 +193,7 @@ class AdaptiveFeatureFusion(nn.Module):
 
     def forward(self,x, y):
 
-        x = torch.cat(x,y)
+        x = torch.cat((x,y), dim = 1) # might be wrong dim
         x = self.dlkcb(x)
         x = self.elu(x)
         x = self.sha(x)
