@@ -2,17 +2,19 @@ import torch.nn as nn
 import torch
 
 class DLKCB(nn.Module):
-    def __init__(self, in_feat, out_feat, kernel=3, stride = 1, pad = 0):
+    def __init__(self, in_feat, out_feat, kernel=3, stride = 1, pad = 4):
         super(DLKCB, self).__init__()
         
+        self.pad = nn.ReflectionPad2d((pad, pad, pad, pad))
         self.conv1 = nn.Conv2d(in_feat, in_feat, 1)
-        self.dwconv = nn.Conv2d(in_feat, in_feat, kernel,stride, pad, groups=in_feat)
-        self.dwdconv = nn.Conv2d(in_feat, in_feat, kernel, stride, pad, dilation=kernel, groups=in_feat)
+        self.dwconv = nn.Conv2d(in_feat, in_feat, kernel,stride, groups=in_feat)
+        self.dwdconv = nn.Conv2d(in_feat, in_feat, kernel, stride, dilation=kernel, groups=in_feat)
         self.conv2 = nn.Conv2d(in_feat, out_feat, 1)
 
     def forward(self,x):
 
         x = self.conv1(x)
+        x = self.pad(x)
         x = self.dwconv(x)
         x = self.dwdconv(x)
         out = self.conv2(x)
@@ -82,4 +84,22 @@ class DepthWiseConv(nn.Module):
     def forward(self,x):
         x = self.depth_conv(x)
         out = self.point_conv(x)
+        return out
+
+class TransposedUpsample(nn.Module):
+    def __init__(self, in_feat, out_feat, scale = 2, use_dlkcb = True):
+        super().__init__()
+        self.use_dlkcb = use_dlkcb
+        self.dlkcb = DLKCB(in_feat, out_feat, pad=4)    # if weird stuff happens disable
+        if use_dlkcb is False:
+            padding = 2
+        self.up = nn.ConvTranspose2d(out_feat, out_feat, 2, 2, padding = 0)
+
+    def forward(self,x):
+        if self.use_dlkcb is True:
+            x = self.dlkcb(x)
+        print(x.shape)
+        out = self.up(x)
+        print(out.shape)
+
         return out

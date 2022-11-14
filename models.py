@@ -54,14 +54,14 @@ class TailModule(nn.Module):
         super(TailModule, self).__init__()
         pad = (padw,padw,padh,padh)
         self.padding = nn.ReflectionPad2d(pad)
-        self.dlkcb = ConvBlock(in_feat, out_feat, kernel)
+        self.conv1 = ConvBlock(in_feat, out_feat, 3)
         self.elu = nn.ELU()
         self.conv2 = ConvBlock(out_feat, out_feat, 3)
         self.tanh = nn.Tanh()
     
     def forward(self,x):
         x = self.padding(x)
-        x = self.dlkcb(x)
+        x = self.conv1(x)
         x = self.elu(x)
         x = self.conv2(x)
         out = self.tanh(x)
@@ -76,7 +76,7 @@ class MHA(nn.Module):
         self.pad_list = pad_list
         self.parallel_conv = []
         
-        for i,_ in enumerate(num_parallel_conv, start = 0):
+        for i,_ in enumerate(range(num_parallel_conv), start = 0):
             kernel = kernel_list[i]
             pad = pad_list[i]
             dlkcb = DLKCB(in_feat, out_feat, kernel, pad=pad)
@@ -90,7 +90,9 @@ class MHA(nn.Module):
     def forward(self,x):
         res = x
         par_out = x
-        for i in self.num_parallel_conv:
+        
+        for i in range(self.num_parallel_conv):
+
             conv = self.parallel_conv[i]
             par_out = conv(par_out)
             x = torch.add(par_out,x)
@@ -103,12 +105,12 @@ class MHA(nn.Module):
         return out
 
 class MHAC(nn.Module):
-    def __init__(self, in_feat, inner_feat, num_parallel_conv, kernel_list, pad_list, groups, kernel = 3):
+    def __init__(self, in_feat, inner_feat, out_feat, num_parallel_conv, kernel_list, pad_list, groups, kernel = 3):
         super(MHAC, self).__init__()
 
         self.mha = MHA(in_feat, in_feat, num_parallel_conv, kernel_list, pad_list, groups)
         self.cot = CoT(in_feat)
-        self.aff = AdaptiveFeatureFusion(in_feat * 2, inner_feat, kernel, groups)
+        self.aff = AdaptiveFeatureFusion(in_feat * 2, inner_feat, out_feat, kernel, groups)
 
     def forward(self,x):
 
@@ -122,6 +124,8 @@ class SHA(nn.Module):
     def __init__(self, in_feat, out_feat, groups, kernel = 3, downsample = False):
         super(SHA,self).__init__()
         self.groups = groups
+        self.in_feat = in_feat
+        self.out_feat = out_feat
 
         # might be wrong
         self.avgh = nn.AvgPool2d((kernel,1),stride=1) # kernel of size 1 horizontaly and 0 verticaly
@@ -134,17 +138,19 @@ class SHA(nn.Module):
         self.shuffle = nn.ChannelShuffle(groups)
 
         self.relu6 = nn.ReLU6()
-
+        self.downsample = downsample
         if downsample is True:
             stride = 2
         else: 
             stride = 1
 
-        self.conv1 = ConvBlock(in_feat,out_feat, pad=1)
+        self.conv1 = ConvBlock(in_feat,in_feat, pad=1)
         self.conv2 = ConvBlock(in_feat,out_feat, stride = stride, pad=1)
 
         self.sigmoid = nn.Sigmoid()
 
+        self.convres = ConvBlock(in_feat, out_feat)
+        self.down = nn.Upsample(scale_factor=0.5)
     def forward(self,x):
 
         res = x
@@ -181,18 +187,24 @@ class SHA(nn.Module):
         out = torch.mul(x1,x2)
         out = self.sigmoid(out)
 
+        if self.downsample is True:
+            res = self.down(res)
+
+        if self.in_feat is not self.out_feat:
+            res = self.convres(x)
+
         out = torch.mul(out,res)
 
         return out
 
 class AdaptiveFeatureFusion(nn.Module):
-    def __init__(self, in_feat, inner_feat, kernel, groups):
+    def __init__(self, in_feat, inner_feat, out_feat, kernel, groups):
         super(AdaptiveFeatureFusion, self).__init__()
 
-        self.dlkcb = DLKCB(in_feat, inner_feat, kernel)
+        self.dlkcb = DLKCB(in_feat, inner_feat, kernel, pad=4)
         self.elu = nn.ELU()
         self.sha = SHA(inner_feat,inner_feat,groups)
-        self.conv1 = ConvBlock(inner_feat, 1)
+        self.conv1 = ConvBlock(inner_feat, out_feat)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self,x, y):
@@ -230,10 +242,50 @@ class DensityEstimation(nn.Module):
         return out
 
 class Shallow(nn.Module):
-    def __init__(self):
+    def __init__(self, in_feat, inner_feat, num_mhac, num_parallel_conv, kernel_list, pad_list):
         super(Shallow, self).__init__()
 
+        self.conv1 = ConvBlock(in_feat,in_feat)
+        self.sha1 = SHA(in_feat, in_feat, in_feat, downsample=True)
+        self.conv2 = ConvBlock(in_feat, inner_feat)
+        self.sha2 = SHA(inner_feat, inner_feat, inner_feat//16, downsample=True)
+
+        m = []
+        for i in range(num_mhac):
+            m.append(MHAC(inner_feat, inner_feat, inner_feat, num_parallel_conv, kernel_list, pad_list, inner_feat//16))
+
+        self.mhacblock = nn.Sequential(*m)
+
+        self.up1 = TransposedUpsample(inner_feat, inner_feat)
+        self.sha3 = SHA(inner_feat, inner_feat, inner_feat//16)
+        self.up2 = TransposedUpsample(inner_feat, in_feat)
+        self.sha4 = SHA(in_feat, in_feat, in_feat)
+
+        self.tail = TailModule(in_feat, in_feat, 3, 0, 0)
+
     def forward(self,x):
+        res = x
+        x = self.conv1(x)
+        res1 = x
+        x = self.sha1(x)
+        x = self.conv2(x)
+        res2 = x
+        x = self.sha2(x)
+
+        x = self.mhacblock(x)
+
+        print(x.shape)
+        x = self.up1(x)
+        print(x.shape)
+        x = torch.add(x, res2)
+        x = self.sha3(x)
+        x = self.up2(x)
+        x = torch.add(x,res1)
+        x = self.sha4(x)
+
+        out = self.tail(x)
+
+        out = torch.add(out, res)
         return out
 
 class Deep(nn.Module):
