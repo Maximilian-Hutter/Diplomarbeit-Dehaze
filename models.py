@@ -70,8 +70,18 @@ class MHA(nn.Module):
 class MHAC(nn.Module):
     def __init__(self) -> None:
         super(MHAC, self).__init__()
-    
+
+        self.mha = MHA()
+        self.cot = CoT()
+        self.aff = AdaptiveFeatureFusion()
+
     def forward(self,x):
+
+        mhaout = self.mha(x)
+        cotout = self.cot(x)
+
+        out = self.aff(mhaout, cotout)
+    
         return out
         
 class SHA(nn.Module):
@@ -149,15 +159,14 @@ class AdaptiveFeatureFusion(nn.Module):
         self.conv1 = ConvBlock(inner_feat, 1)
         self.sigmoid = nn.Sigmoid()
 
-    def forward(self,x, hazy,pseudo):
-        dense = torch.cat(hazy,pseudo)
-        dense = self.dlkcb(dense)
-        dense = self.elu(dense)
-        dense = self.sha(dense)
-        dense = self.conv1(dense)
-        dense = self.sigmoid(dense)
+    def forward(self,x, y):
 
-        out = torch.mul(x,dense)
+        x = torch.cat(x,y)
+        x = self.dlkcb(x)
+        x = self.elu(x)
+        x = self.sha(x)
+        x = self.conv1(x)
+        out = self.sigmoid(x)
         
         return out
 
