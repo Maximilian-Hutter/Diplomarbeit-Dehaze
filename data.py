@@ -19,12 +19,12 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, index):   # get images to dataloader
 
-        label = Image.open(self.root + self.gt[index % len(self.imgs)])
+        label = Image.open(self.root + "/gt/" + self.gt[index % len(self.imgs)])
         if self.crop_size != None:
             label = myutils.crop_center(label, self.crop_size, self.crop_size)  # crop image if the images are not the same size
         label = label.resize(size = self.size)  # change size
 
-        img = Image.open(self.img[index % len(self.imgs)])
+        img = Image.open(self.root + "/gt/" + self.imgs[index % len(self.imgs)])
         if self.crop_size != None:
             img = myutils.crop_center(label, self.crop_size, self.crop_size)
         img = img.resize(size = self.size)

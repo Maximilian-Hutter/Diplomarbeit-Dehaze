@@ -7,20 +7,6 @@ import time
 from torch.utils.tensorboard import SummaryWriter
 import torch
 
-def setcuda(hparams, gpus_list):
-    cuda = hparams["gpu_mode"]
-    if cuda and not torch.cuda.is_available():
-        raise Exception("No GPU found, please run without --cuda")
-
-
-    torch.manual_seed(hparams["seed"])
-    if cuda:
-        torch.cuda.manual_seed(hparams["seed"])
-
-    if cuda:
-        Net = Net.cuda(gpus_list[0])
-        criterion = criterion.cuda(gpus_list[0])
-
 def checkpointGenerate(epoch, hparams, Net):
     model_out_path = hparams["save_folder"]+str(epoch)+hparams["model_type"]+".pth".format(epoch)
     torch.save(Net.state_dict(), model_out_path)
@@ -43,14 +29,14 @@ def print_network(net, hparams):
     print_network(Net)
     print('----------------------------------------------------')
 
-def print_info(epoch, epoch_loss,train_acc, dataloader):
+def print_info(epoch, epoch_loss,train_acc, dataloader, epoch_time):
         writer = SummaryWriter()
         epoch_time = time.time() - epoch_time 
         Accuracy = 100*train_acc / len(dataloader)
         writer.add_scalar('loss', epoch_loss, global_step=epoch)
         writer.add_scalar('accuracy',Accuracy, global_step=epoch)
-        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds /n".format(epoch, ((epoch_loss/2) / len(dataloader)), Accuracy, epoch_time))
-
+        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds".format(epoch, ((epoch_loss/2) / len(dataloader)), Accuracy, epoch_time))
+        print("\n")
 
 def crop_center(pil_img, crop_width, crop_height):
     img_width, img_height = pil_img.size
@@ -59,12 +45,12 @@ def crop_center(pil_img, crop_width, crop_height):
                          (img_width + crop_width) // 2,
                          (img_height + crop_height) // 2))
 
-def save_trainimg(generated_image, epoch):
+def save_trainimg(generated_image, epoch, name = ""):
     transform = T.ToPILImage()
     gimg = transform(generated_image.squeeze(0))
     if not os.path.isdir("trainimg"):
         os.mkdir("trainimg")
-    gimg.save("trainimg/gen"+ str(epoch) +".png")
+    gimg.save("trainimg/"+ str(name) + str(epoch) +".png")
 
 def save_allimg(generated_image, label, input, epoch):
     transform = T.ToPILImage()

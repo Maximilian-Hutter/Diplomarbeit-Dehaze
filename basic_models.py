@@ -1,12 +1,27 @@
 import torch.nn as nn
 import torch
 
+class ChannelShuffle(nn.Module):
+    def __init__(self, groups):
+        super().__init__()
+        self.groups = groups
+
+    def forward(self,x):
+        batch, channels, height, width = x.size()
+        assert (channels % self.groups == 0)
+        channels_per_group = channels // self.groups
+        x = x.view(batch, self.groups, channels_per_group, height, width)
+        x = torch.transpose(x, 1, 2).contiguous()
+        out = x.view(batch, channels, height, width)
+        return out
+
 class DLKCB(nn.Module):
     def __init__(self, in_feat, out_feat, kernel=3, stride = 1, pad = 4):
         super(DLKCB, self).__init__()
         
         self.pad = nn.ReflectionPad2d((pad, pad, pad, pad))
         self.conv1 = nn.Conv2d(in_feat, in_feat, 1)
+        self.shuffle = ChannelShuffle(in_feat // 4)
         self.dwconv = nn.Conv2d(in_feat, in_feat, kernel,stride, groups=in_feat)
         self.dwdconv = nn.Conv2d(in_feat, in_feat, kernel, stride, dilation=kernel, groups=in_feat)
         self.conv2 = nn.Conv2d(in_feat, out_feat, 1)

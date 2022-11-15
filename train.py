@@ -22,18 +22,30 @@ if __name__ == '__main__':
         "gpus": 1,
         "gpu_mode": True,
         "crop_size": None,
+        "resume": False,
         "train_data_path": "C:/Data/dehaze/prepared/",
         "augment_data": False,
-        "epochs_haze": 100,
-        "epochs_frida": 50,
-        "epochs_cityscape": 300,
+        "epochs_o_haze": 10,
+        "epochs_nh_haze": 10,
+        "epochs_cityscapes": 30,
         "batch_size": 1,
+        "crit_lambda": 1,
         "threads": 4,
-        "height":144,
-        "width":144,
+        "height":256,
+        "width":256,
         "lr": 0.0004,
         "beta1": 0.9,
-        "beta2": 0.999
+        "beta2": 0.999,
+        "mhac_filter": 256,
+        "mha_filter": 16,
+        "num_mhablock": 4,
+        "num_mhac": 3,
+        "num_parallel_conv": 2,
+        "kernel_list": [3,5,7],
+        "pad_list": [4,12,24],
+        "save_folder": "./weights/",
+        "model_type": "Dehaze",
+        "snapshots": 10
     }
 
     np.random.seed(hparams["seed"])    # set seed to default 123 or opt
@@ -48,12 +60,12 @@ if __name__ == '__main__':
     size = (hparams["height"], hparams["width"])
 
     print('==> Loading Datasets')
-    dataloader_frida = DataLoader(ImageDataset(hparams["train_data_path"] + "frida",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
-    dataloader_haze = DataLoader(ImageDataset(hparams["train_data_path"] + "Haze",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
+    dataloader_o_haze = DataLoader(ImageDataset(hparams["train_data_path"] + "O-Haze",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
+    dataloader_nh_haze = DataLoader(ImageDataset(hparams["train_data_path"] + "NH-Haze",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
     dataloader_cityscapes = DataLoader(ImageDataset(hparams["train_data_path"] + "cityscapes",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
 
     # define the Network
-    Net = Dehaze()
+    Net = Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"])
 
     # print Network parameters
     pytorch_params = sum(p.numel() for p in Net.parameters())
@@ -63,7 +75,18 @@ if __name__ == '__main__':
     criterion = torch.nn.L1Loss(reduction="mean")
     optimizer = optim.Adam(Net.parameters(), lr=hparams["lr"], betas=(hparams["beta1"],hparams["beta2"]))
 
-    myutils.setcuda(hparams, gpus_list)
+    cuda = hparams["gpu_mode"]
+    if cuda and not torch.cuda.is_available():
+        raise Exception("No GPU found, please run without --cuda")
+
+
+    torch.manual_seed(hparams["seed"])
+    if cuda:
+        torch.cuda.manual_seed(hparams["seed"])
+
+    if cuda:
+        Net = Net.cuda(gpus_list[0])
+        criterion = criterion.cuda(gpus_list[0])
 
     # load checkpoint/load model
     star_n_iter = 0
@@ -85,13 +108,13 @@ if __name__ == '__main__':
     scaler = torch.cuda.amp.GradScaler()
 
     # pretrain in NH_HAZE
-    for epoch in range(start_epoch, hparams["epochs_haze"]):
+    for epoch in range(start_epoch, hparams["epochs_o_haze"]):
         epoch_loss = 0
         Net.train()
         epoch_time = time.time()
         correct = 0
 
-        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
+        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_o_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
 
             start_time = time.time()
             img = Variable(imgs["img"].type(Tensor))
@@ -107,13 +130,62 @@ if __name__ == '__main__':
                 param.grad = None
 
             with torch.cuda.amp.autocast():
-                generated_image = Net(img)
+                generated_image, pseudo = Net(img)
                 crit = criterion(generated_image, label)
                 loss = hparams["crit_lambda"] *  crit
             
             if hparams["batch_size"] == 1:
                 if i == 1:
-                    myutils.save_trainimg(generated_image, epoch)
+                    myutils.save_trainimg(generated_image, epoch, "o-haze")
+
+            train_acc = torch.sum(generated_image == label)
+            epoch_loss += loss.item()
+
+            scaler.scale(loss).backward() #derivative for channel_shuffle is not implemented
+            scaler.step(optimizer)
+            scaler.update()
+
+            #compute time and compute efficiency and print information
+            #pbar.set_description("Compute efficiency. {:.2f}, epoch: {}/{}".format(process_time/(process_time+prepare_time),epoch, opt.epoch))
+
+
+        if (epoch+1) % (hparams["snapshots"]) == 0:
+            myutils.checkpointGenerate(epoch, hparams, Net)
+
+        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_o_haze, epoch_time)
+        epoch_time = time.time()
+
+
+
+    for epoch in range(start_epoch, hparams["epochs_nh_haze"]):
+        epoch_loss = 0
+        Net.train()
+        epoch_time = time.time()
+        correct = 0
+
+        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_nh_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
+
+            start_time = time.time()
+            img = Variable(imgs["img"].type(Tensor))
+            img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
+            label = Variable(imgs["label"].type(Tensor))
+
+            if cuda:    # put variables to gpu
+                img = img.to(gpus_list[0])
+                label = label.to(gpus_list[0])
+
+            # start train
+            for param in Net.parameters():
+                param.grad = None
+
+            with torch.cuda.amp.autocast():
+                generated_image, pseudo = Net(img)
+                crit = criterion(generated_image, label)
+                loss = hparams["crit_lambda"] *  crit
+            
+            if hparams["batch_size"] == 1:
+                if i == 1:
+                    myutils.save_trainimg(generated_image, epoch, "nh_haze")
 
             train_acc = torch.sum(generated_image == label)
             epoch_loss += loss.item()
@@ -130,56 +202,8 @@ if __name__ == '__main__':
         if (epoch+1) % (hparams["snapshots"]) == 0:
             myutils.checkpointGenerate(epoch, hparams, Net)
 
-        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_haze)
-
-
-
-    for epoch in range(start_epoch, hparams["epochs_frida"]):
-        epoch_loss = 0
-        Net.train()
+        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_nh_haze, epoch_time)
         epoch_time = time.time()
-        correct = 0
-
-        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_frida)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
-
-            start_time = time.time()
-            img = Variable(imgs["img"].type(Tensor))
-            img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
-            label = Variable(imgs["label"].type(Tensor))
-
-            if cuda:    # put variables to gpu
-                img = img.to(gpus_list[0])
-                label = label.to(gpus_list[0])
-
-            # start train
-            for param in Net.parameters():
-                param.grad = None
-
-            with torch.cuda.amp.autocast():
-                generated_image = Net(img)
-                crit = criterion(generated_image, label)
-                loss = hparams["crit_lambda"] *  crit
-            
-            if hparams["batch_size"] == 1:
-                if i == 1:
-                    myutils.save_trainimg(generated_image, epoch)
-
-            train_acc = torch.sum(generated_image == label)
-            epoch_loss += loss.item()
-
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-
-            #compute time and compute efficiency and print information
-            process_time = time.time() - start_time
-            #pbar.set_description("Compute efficiency. {:.2f}, epoch: {}/{}".format(process_time/(process_time+prepare_time),epoch, opt.epoch))
-
-
-        if (epoch+1) % (hparams["snapshots"]) == 0:
-            myutils.checkpointGenerate(epoch, hparams, Net)
-
-        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_frida)
 
     
     for epoch in range(start_epoch, hparams["epochs_cityscapes"]):
@@ -204,13 +228,13 @@ if __name__ == '__main__':
                 param.grad = None
 
             with torch.cuda.amp.autocast():
-                generated_image = Net(img)
+                generated_image, pseudo = Net(img)
                 crit = criterion(generated_image, label)
                 loss = hparams["crit_lambda"] *  crit
             
             if hparams["batch_size"] == 1:
                 if i == 1:
-                    myutils.save_trainimg(generated_image, epoch)
+                    myutils.save_trainimg(generated_image, epoch, "cityscapes")
 
             train_acc = torch.sum(generated_image == label)
             epoch_loss += loss.item()
@@ -227,8 +251,9 @@ if __name__ == '__main__':
         if (epoch+1) % (hparams["snapshots"]) == 0:
             myutils.checkpointGenerate(epoch, hparams, Net)
 
-        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_cityscapes)
+        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_cityscapes, epoch_time)
+        epoch_time = time.time()
 
 
 
-myutils.print_network(Net, hparams)
+    myutils.print_network(Net, hparams)

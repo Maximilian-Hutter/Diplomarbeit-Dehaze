@@ -135,7 +135,7 @@ class SHA(nn.Module):
         self.maxv = nn.MaxPool2d((1,kernel),stride=1)
         #
 
-        self.shuffle = nn.ChannelShuffle(groups)
+        self.shuffle = ChannelShuffle(groups)
 
         self.relu6 = nn.ReLU6()
         self.downsample = downsample
@@ -144,7 +144,7 @@ class SHA(nn.Module):
         else: 
             stride = 1
 
-        self.conv1 = ConvBlock(in_feat,in_feat, pad=1)
+        self.conv1 = ConvBlock(in_feat*2,in_feat*2, pad=1)
         self.conv2 = ConvBlock(in_feat,out_feat, stride = stride, pad=1)
 
         self.sigmoid = nn.Sigmoid()
@@ -152,7 +152,6 @@ class SHA(nn.Module):
         self.convres = ConvBlock(in_feat, out_feat)
         self.down = nn.Upsample(scale_factor=0.5)
     def forward(self,x):
-
         res = x
         havg = self.avgh(x)
         hmax = self.maxh(x)
@@ -167,17 +166,17 @@ class SHA(nn.Module):
         h = F.pad(h, (0,0,1,1), "constant",0)
         v = F.pad(v, (1,1), "constant",0)
 
-        x = torch.cat((h,v))
+        x = torch.cat((h,v), dim= 1)
         # put x to cpu because channel_shuffle no cuda backend
-        x = x.to("cpu")
-        x = self.shuffle(x) # cuda error
-        x = x.to("cuda")
+        #x = x.to("cpu")
+        x = self.shuffle(x) # cuda error   -> will be implemented by myself
+        #x = x.to("cuda")
 
         # put cuda back to cpu
         x = self.conv1(x)
         x = self.relu6(x)
+        x = torch.split(x,self.in_feat, dim = 1)
 
-        x = torch.split(x,2)
         x1 = x[0]
         x2 = x[1]
 
