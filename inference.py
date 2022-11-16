@@ -68,22 +68,29 @@ if __name__ == '__main__':
 
     image= image.to(torch.float32)
 
-    model=Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"]).cuda()
+    model=Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"])
 
-    if opt.gpu_mode == False:
+    if hparams["gpu_mode"] == False:
         device = torch.device('cpu')
 
-    if opt.gpu_mode:
-            device = torch.device('cuda:0')
+    if hparams["gpu_mode"]:
+            device = torch.device('cuda')
 
     model.load_state_dict(torch.load(PATH,map_location=device))
 
     model.eval()
     start = time.time()
     transform = T.ToPILImage()
-    out = model(image)
+    image = image.to(torch.device('cuda'))
+    times = []
+    for i in range(10):
+        start = time.time()
+        out = model(image)
+        end = time.time()
+        proctime = end -start
+        print(proctime)
+
+    out = out[0]
     out = transform(out.squeeze(0))
-    end = time.time()
-    proctime = end -start
+    
     out.save('results/no_fog.png')
-    print(proctime)

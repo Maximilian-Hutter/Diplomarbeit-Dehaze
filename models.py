@@ -83,8 +83,8 @@ class MHA(nn.Module):
         #     dlkcb.cuda()
         #     self.parallel_conv.append(dlkcb)
 
-        self.dlkcb = DLKCB(in_feat, in_feat, kernel = kernel_list[0], pad = pad_list[0]).cuda()
-        self.dlkcb2 = DLKCB(in_feat, in_feat, kernel = kernel_list[1], pad = pad_list[1]).cuda()
+        self.dlkcb = DLKCB(in_feat, in_feat, kernel = kernel_list[0], pad = pad_list[0])
+        self.dlkcb2 = DLKCB(in_feat, in_feat, kernel = kernel_list[1], pad = pad_list[1])
 
         self.lrelu = nn.LeakyReLU()
         self.convsha = ConvBlock(in_feat, out_feat, pad=1)
@@ -177,12 +177,7 @@ class SHA(nn.Module):
         v = F.pad(v, (1,1), "constant",0)
 
         x = torch.cat((h,v), dim= 1)
-        # put x to cpu because channel_shuffle no cuda backend
-        #x = x.to("cpu")
-        x = self.shuffle(x) # cuda error   -> will be implemented by myself
-        #x = x.to("cuda")
-
-        # put cuda back to cpu
+        x = self.shuffle(x)
         x = self.conv1(x)
         x = self.relu6(x)
         x = torch.split(x,self.in_feat, dim = 1)
@@ -320,10 +315,10 @@ class Dehaze(nn.Module):
     def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24]):
         super(Dehaze, self).__init__()
 
-        self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list) # filter 256
-        self.dense = DensityEstimation(6,3, 4, 0, 0)
-        self.aff = AdaptiveFeatureFusion()
-        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list) # filter 16
+        self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list).to(torch.device("cuda:0")) # filter 256
+        self.dense = DensityEstimation(6,3, 4, 0, 0).to(torch.device("cuda:0"))
+        self.aff = AdaptiveFeatureFusion().to(torch.device("cuda:0"))
+        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list).to(torch.device("cuda:0")) # filter 16
 
     def forward(self, hazy):
 
@@ -331,9 +326,9 @@ class Dehaze(nn.Module):
         density = self.dense(pseudo, hazy)
         density = torch.mul(density, shares)
 
-
         x = self.aff(pseudo, hazy)
         x = self.deep(x, density)
+
         out = torch.add(x, hazy)
         out = torch.add(x, pseudo)
 

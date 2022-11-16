@@ -86,8 +86,8 @@ if __name__ == '__main__':
         torch.cuda.manual_seed(hparams["seed"])
 
     if cuda:
-        Net = Net.cuda(gpus_list[0])
-        criterion = criterion.cuda(gpus_list[0])
+        Net = Net.to(torch.device("cuda:0"))
+        criterion = criterion.to(torch.device("cuda:0"))
 
     # load checkpoint/load model
     star_n_iter = 0
@@ -122,9 +122,9 @@ if __name__ == '__main__':
             img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
             label = Variable(imgs["label"].type(Tensor))
 
-            if cuda:    # put variables to gpu
-                img = img.to(gpus_list[0])
-                label = label.to(gpus_list[0])
+
+            img = img.to(torch.device('cuda'))
+            label = label.to(torch.device('cuda'))
 
             # start train
             for param in Net.parameters():
