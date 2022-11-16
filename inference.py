@@ -8,7 +8,7 @@ from PIL import Image
 import argparse
 import time
 import torchvision
-
+from params import hparams
 
 parser = argparse.ArgumentParser(description='PyTorch ESRGANplus')
 parser.add_argument('--modelpath', type=str, default="weights/9Dehaze.pth", help=("path to the model .pth files"))
@@ -22,43 +22,14 @@ parser.add_argument('--n_resblock', type=int, default=3, help="set number of fil
 parser.add_argument('--scale', type=int, default=2, help="set number of filters")
     
 if __name__ == '__main__':
-    hparams = {
-        "seed": 123,
-        "gpus": 1,
-        "gpu_mode": True,
-        "crop_size": None,
-        "resume": False,
-        "train_data_path": "C:/Data/dehaze/prepared/",
-        "augment_data": False,
-        "epochs_o_haze": 10,
-        "epochs_nh_haze": 10,
-        "epochs_cityscapes": 30,
-        "batch_size": 1,
-        "crit_lambda": 1,
-        "threads": 4,
-        "height":256,
-        "width":256,
-        "lr": 0.0004,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "mhac_filter": 256,
-        "mha_filter": 16,
-        "num_mhablock": 4,
-        "num_mhac": 3,
-        "num_parallel_conv": 2,
-        "kernel_list": [3,5,7],
-        "pad_list": [4,12,24],
-        "save_folder": "./weights/",
-        "model_type": "Dehaze",
-        "snapshots": 10
-    }
+
 
     opt = parser.parse_args()
 
     PATH = opt.modelpath
     imagepath = (opt.inferencepath + opt.imagename)
     image = Image.open(imagepath)
-    image = image.resize((int(256/opt.scale), int(256/opt.scale)))
+    image = image.resize((int(hparams["height"]/opt.scale), int(hparams["width"]/opt.scale)))
     image.save('results/foggy.png')
 
     transformtotensor = transforms.Compose([transforms.ToTensor()])
@@ -83,12 +54,13 @@ if __name__ == '__main__':
     transform = T.ToPILImage()
     image = image.to(torch.device('cuda'))
     times = []
-    for i in range(10):
+    for i in range(100):
         start = time.time()
         out = model(image)
         end = time.time()
-        proctime = end -start
-        print(proctime)
+        proctime = round(end -start, 4)
+        if proctime <= 0.0300:
+            print(proctime)
 
     out = out[0]
     out = transform(out.squeeze(0))

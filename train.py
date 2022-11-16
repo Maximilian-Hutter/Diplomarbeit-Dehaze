@@ -16,38 +16,10 @@ from torch.autograd import Variable
 # my imports
 import myutils
 from loss import ChabonnierLoss
+from params import hparams
 
 if __name__ == '__main__':
-    hparams = {
-        "seed": 123,
-        "gpus": 1,
-        "gpu_mode": True,
-        "crop_size": None,
-        "resume": False,
-        "train_data_path": "C:/Data/dehaze/prepared/",
-        "augment_data": False,
-        "epochs_o_haze": 10,
-        "epochs_nh_haze": 10,
-        "epochs_cityscapes": 30,
-        "batch_size": 1,
-        "crit_lambda": 1,
-        "threads": 4,
-        "height":256,
-        "width":256,
-        "lr": 0.0004,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "mhac_filter": 256,
-        "mha_filter": 16,
-        "num_mhablock": 4,
-        "num_mhac": 3,
-        "num_parallel_conv": 2,
-        "kernel_list": [3,5,7],
-        "pad_list": [4,12,24],
-        "save_folder": "./weights/",
-        "model_type": "Dehaze",
-        "snapshots": 10
-    }
+
 
     np.random.seed(hparams["seed"])    # set seed to default 123 or opt
     torch.manual_seed(hparams["seed"])
