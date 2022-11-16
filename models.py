@@ -76,12 +76,10 @@ class MHA(nn.Module):
         self.pad_list = pad_list
         self.parallel_conv = []
         
-        for i,_ in enumerate(range(num_parallel_conv), start = 0):
-            kernel = kernel_list[i]
-            pad = pad_list[i]
-            dlkcb = DLKCB(in_feat, out_feat, kernel, pad=pad)
-            dlkcb.cuda()
-            self.parallel_conv.append(dlkcb)
+        self.dlkcb = DLKCB(in_feat, out_feat, kernel_list[0], pad=pad_list[0])
+        self.dlkcb2 = DLKCB(in_feat, out_feat, kernel_list[1], pad=pad_list[1])
+        self.dlkcb3 = DLKCB(in_feat, out_feat, kernel_list[2], pad=pad_list[2])
+
 
         self.lrelu = nn.LeakyReLU()
         self.convsha = ConvBlock(in_feat, out_feat, pad=1)
@@ -89,13 +87,12 @@ class MHA(nn.Module):
 
     def forward(self,x):
         res = x
-        par_out = x
         
-        for i in range(self.num_parallel_conv):
+        x1 = self.dlkcb(x)
+        x2 = self.dlkcb2(x)
+        x3 = self.dlkcb3(x)
 
-            conv = self.parallel_conv[i]
-            par_out = conv(par_out)
-            x = torch.add(par_out,x)
+        x = torch.add(torch.add(x1,x2), torch.add(x3,res))
 
         x = self.lrelu(x)
         x = self.convsha(x)
