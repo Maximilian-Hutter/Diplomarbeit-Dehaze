@@ -15,6 +15,7 @@ from torch.autograd import Variable
 
 # my imports
 import myutils
+from loss import ChabonnierLoss
 
 if __name__ == '__main__':
     hparams = {
@@ -72,7 +73,7 @@ if __name__ == '__main__':
     print("Network parameters: {}".format(pytorch_params))
 
     # set criterions & optimizers
-    criterion = torch.nn.L1Loss(reduction="mean")
+    criterion = ChabonnierLoss(eps = 1e-6)
     optimizer = optim.Adam(Net.parameters(), lr=hparams["lr"], betas=(hparams["beta1"],hparams["beta2"]))
 
     cuda = hparams["gpu_mode"]
@@ -131,15 +132,16 @@ if __name__ == '__main__':
 
             with torch.cuda.amp.autocast():
                 generated_image, pseudo = Net(img)
-                crit = criterion(generated_image, label)
-                loss = hparams["crit_lambda"] *  crit
+                chabonnier_gen = criterion(generated_image, label)
+                chabonnier_pseudo = criterion(pseudo, label)
+                loss = hparams["crit_lambda"] *  chabonnier_gen + chabonnier_pseudo
             
             if hparams["batch_size"] == 1:
                 if i == 1:
                     myutils.save_trainimg(generated_image, epoch, "o-haze")
 
             train_acc = torch.sum(generated_image == label)
-            epoch_loss += loss.item()
+            epoch_loss += loss
 
             scaler.scale(loss).backward() #derivative for channel_shuffle is not implemented
             scaler.step(optimizer)

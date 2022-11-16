@@ -27,7 +27,6 @@ class DLKCB(nn.Module):
         self.conv2 = nn.Conv2d(in_feat, out_feat, 1)
 
     def forward(self,x):
-
         x = self.conv1(x)
         x = self.pad(x)
         x = self.dwconv(x)
