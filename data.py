@@ -24,7 +24,7 @@ class ImageDataset(Dataset):
             label = myutils.crop_center(label, self.crop_size, self.crop_size)  # crop image if the images are not the same size
         label = label.resize(size = self.size)  # change size
 
-        img = Image.open(self.root + "/gt/" + self.imgs[index % len(self.imgs)])
+        img = Image.open(self.root + "/input/" + self.imgs[index % len(self.imgs)])
         if self.crop_size != None:
             img = myutils.crop_center(label, self.crop_size, self.crop_size)
         img = img.resize(size = self.size)

@@ -12,6 +12,7 @@ import time
 from tqdm import tqdm
 from prefetch_generator import BackgroundGenerator
 from torch.autograd import Variable
+from torch.utils.tensorboard import SummaryWriter
 
 # my imports
 import myutils
@@ -46,6 +47,7 @@ if __name__ == '__main__':
 
     # set criterions & optimizers
     criterion = ChabonnierLoss(eps = 1e-6)
+    l1_criterion = nn.L1Loss()
     optimizer = optim.Adam(Net.parameters(), lr=hparams["lr"], betas=(hparams["beta1"],hparams["beta2"]))
 
     cuda = hparams["gpu_mode"]
@@ -60,6 +62,7 @@ if __name__ == '__main__':
     if cuda:
         Net = Net.to(torch.device("cuda:0"))
         criterion = criterion.to(torch.device("cuda:0"))
+        l1_criterion = l1_criterion.to(torch.device("cuda:0"))
 
     # load checkpoint/load model
     star_n_iter = 0
@@ -80,7 +83,69 @@ if __name__ == '__main__':
     torch.backends.cudnn.benchmark = True
     scaler = torch.cuda.amp.GradScaler()
 
-    # pretrain in NH_HAZE
+    writer = SummaryWriter()
+
+    
+    
+
+    for epoch in range(start_epoch, hparams["epochs_nh_haze"]):
+        epoch_loss = 0
+        Net.train()
+        epoch_time = time.time()
+        correct = 0
+
+        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_nh_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
+
+            start_time = time.time()
+            img = Variable(imgs["img"].type(Tensor))
+            img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
+            label = Variable(imgs["label"].type(Tensor))
+
+            if cuda:    # put variables to gpu
+                img = img.to(gpus_list[0])
+                label = label.to(gpus_list[0])
+
+            # start train
+            for param in Net.parameters():
+                param.grad = None
+
+            with torch.cuda.amp.autocast():
+                generated_image, pseudo = Net(img)
+                chabonnier_gen = criterion(generated_image, label)
+                chabonnier_pseudo = criterion(pseudo, label)
+                loss = chabonnier_gen + chabonnier_pseudo
+            
+            
+            if hparams["batch_size"] == 1:
+                if i == 1:
+                    myutils.save_trainimg(pseudo, epoch, "pseudo_nh_haze")
+                    myutils.save_trainimg(generated_image, epoch, "generated_nh_haze")
+
+            train_acc = torch.sum(generated_image == label)
+            epoch_loss += loss.item()
+
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+
+            #compute time and compute efficiency and print information
+            process_time = time.time() - start_time
+            #pbar.set_description("Compute efficiency. {:.2f}, epoch: {}/{}".format(process_time/(process_time+prepare_time),epoch, opt.epoch))
+
+
+        if (epoch+1) % (hparams["snapshots"]) == 0:
+            myutils.checkpointGenerate(epoch, hparams, Net, "nh_haze_")
+
+
+        epoch_time = time.time() - epoch_time 
+        Accuracy = 100*train_acc / len(dataloader_nh_haze)
+        writer.add_scalar('loss', epoch_loss, global_step=epoch)
+        writer.add_scalar('accuracy',Accuracy, global_step=epoch)
+        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds".format(epoch, ((epoch_loss/2) / len(dataloader_nh_haze)), Accuracy, epoch_time))
+        print("\n")
+        epoch_time = time.time()
+
+    # pretrain in O Haze
     for epoch in range(start_epoch, hparams["epochs_o_haze"]):
         epoch_loss = 0
         Net.train()
@@ -106,11 +171,12 @@ if __name__ == '__main__':
                 generated_image, pseudo = Net(img)
                 chabonnier_gen = criterion(generated_image, label)
                 chabonnier_pseudo = criterion(pseudo, label)
-                loss = hparams["crit_lambda"] *  chabonnier_gen + chabonnier_pseudo
+                loss = chabonnier_gen + chabonnier_pseudo
             
             if hparams["batch_size"] == 1:
                 if i == 1:
-                    myutils.save_trainimg(generated_image, epoch, "o-haze")
+                    myutils.save_trainimg(pseudo, epoch, "pseudo_o-haze")
+                    myutils.save_trainimg(generated_image, epoch, "generated_o_haze")
 
             train_acc = torch.sum(generated_image == label)
             epoch_loss += loss
@@ -124,62 +190,19 @@ if __name__ == '__main__':
 
 
         if (epoch+1) % (hparams["snapshots"]) == 0:
-            myutils.checkpointGenerate(epoch, hparams, Net)
+            myutils.checkpointGenerate(epoch, hparams, Net, "o_haze_")
 
-        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_o_haze, epoch_time)
+
+        epoch_time = time.time() - epoch_time 
+        Accuracy = 100*train_acc / len(dataloader_o_haze)
+        writer.add_scalar('loss', epoch_loss, global_step=epoch)
+        writer.add_scalar('accuracy',Accuracy, global_step=epoch)
+        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds".format(epoch, ((epoch_loss/2) / len(dataloader_o_haze)), Accuracy, epoch_time))
+        print("\n")
         epoch_time = time.time()
 
 
 
-    for epoch in range(start_epoch, hparams["epochs_nh_haze"]):
-        epoch_loss = 0
-        Net.train()
-        epoch_time = time.time()
-        correct = 0
-
-        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_nh_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
-
-            start_time = time.time()
-            img = Variable(imgs["img"].type(Tensor))
-            img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
-            label = Variable(imgs["label"].type(Tensor))
-
-            if cuda:    # put variables to gpu
-                img = img.to(gpus_list[0])
-                label = label.to(gpus_list[0])
-
-            # start train
-            for param in Net.parameters():
-                param.grad = None
-
-            with torch.cuda.amp.autocast():
-                generated_image, pseudo = Net(img)
-                crit = criterion(generated_image, label)
-                loss = hparams["crit_lambda"] *  crit
-            
-            if hparams["batch_size"] == 1:
-                if i == 1:
-                    myutils.save_trainimg(generated_image, epoch, "nh_haze")
-
-            train_acc = torch.sum(generated_image == label)
-            epoch_loss += loss.item()
-
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-
-            #compute time and compute efficiency and print information
-            process_time = time.time() - start_time
-            #pbar.set_description("Compute efficiency. {:.2f}, epoch: {}/{}".format(process_time/(process_time+prepare_time),epoch, opt.epoch))
-
-
-        if (epoch+1) % (hparams["snapshots"]) == 0:
-            myutils.checkpointGenerate(epoch, hparams, Net)
-
-        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_nh_haze, epoch_time)
-        epoch_time = time.time()
-
-    
     for epoch in range(start_epoch, hparams["epochs_cityscapes"]):
         epoch_loss = 0
         Net.train()
@@ -203,12 +226,15 @@ if __name__ == '__main__':
 
             with torch.cuda.amp.autocast():
                 generated_image, pseudo = Net(img)
-                crit = criterion(generated_image, label)
-                loss = hparams["crit_lambda"] *  crit
+                chabonnier_gen = criterion(generated_image, label)
+                chabonnier_pseudo = criterion(pseudo, label) 
+                loss = chabonnier_gen + chabonnier_pseudo
+            
             
             if hparams["batch_size"] == 1:
                 if i == 1:
-                    myutils.save_trainimg(generated_image, epoch, "cityscapes")
+                    myutils.save_trainimg(pseudo, epoch, "pseudo_cityscapes")
+                    myutils.save_trainimg(generated_image, epoch, "generated_cityscapes")
 
             train_acc = torch.sum(generated_image == label)
             epoch_loss += loss.item()
@@ -223,9 +249,14 @@ if __name__ == '__main__':
 
 
         if (epoch+1) % (hparams["snapshots"]) == 0:
-            myutils.checkpointGenerate(epoch, hparams, Net)
+            myutils.checkpointGenerate(epoch, hparams, Net, "cityscapes_")
 
-        myutils.print_info(epoch, epoch_loss,train_acc, dataloader_cityscapes, epoch_time)
+        epoch_time = time.time() - epoch_time 
+        Accuracy = 100*train_acc / len(dataloader_cityscapes)
+        writer.add_scalar('loss', epoch_loss, global_step=epoch)
+        writer.add_scalar('accuracy',Accuracy, global_step=epoch)
+        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds".format(epoch, ((epoch_loss/2) / len(dataloader_cityscapes)), Accuracy, epoch_time))
+        print("\n")
         epoch_time = time.time()
 
 

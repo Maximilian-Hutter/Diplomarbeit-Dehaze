@@ -4,11 +4,10 @@ from PIL import Image
 from tqdm import tqdm
 from prefetch_generator import BackgroundGenerator
 import time
-from torch.utils.tensorboard import SummaryWriter
 import torch
 
-def checkpointGenerate(epoch, hparams, Net):
-    model_out_path = hparams["save_folder"]+str(epoch)+hparams["model_type"]+".pth".format(epoch)
+def checkpointGenerate(epoch, hparams, Net, name = None):
+    model_out_path = hparams["save_folder"]+str(epoch)+ str(name) + hparams["model_type"]+".pth".format(epoch)
     torch.save(Net.state_dict(), model_out_path)
     print("Checkpoint saved to {}".format(model_out_path))
 
@@ -29,14 +28,6 @@ def print_network(net, hparams):
     print_network(Net)
     print('----------------------------------------------------')
 
-def print_info(epoch, epoch_loss,train_acc, dataloader, epoch_time):
-        writer = SummaryWriter()
-        epoch_time = time.time() - epoch_time 
-        Accuracy = 100*train_acc / len(dataloader)
-        writer.add_scalar('loss', epoch_loss, global_step=epoch)
-        writer.add_scalar('accuracy',Accuracy, global_step=epoch)
-        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds".format(epoch, ((epoch_loss/2) / len(dataloader)), Accuracy, epoch_time))
-        print("\n")
 
 def crop_center(pil_img, crop_width, crop_height):
     img_width, img_height = pil_img.size
