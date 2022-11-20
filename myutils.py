@@ -77,6 +77,8 @@ def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startn
             for file in files:
                 if substring in file:
                     outfiles.append(file)
+        else:
+            outfiles = files
 
         all_files = outfiles
 
@@ -93,4 +95,4 @@ def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startn
                 img.save(outpath + file)
 
 if __name__ == "__main__":
-    prepare_imgdatadir("C:/Data/dehaze/O-HAZE/", "C:/Data/dehaze/prepared/O-Haze/input/" ,substring = "hazy" ,numerate=True,startnum = 0, size=(2048,1024), multiple_dirs=False)
+    prepare_imgdatadir("C:/Data/dehaze/unprepared/cityscapes/input/", "C:/Data/dehaze/prepared/cityscapes/input/" ,substring = None ,numerate=True,startnum = 0, size=(1920,1080), multiple_dirs=False)

@@ -11,7 +11,7 @@ import torchvision
 from params import hparams
 
 parser = argparse.ArgumentParser(description='PyTorch ESRGANplus')
-parser.add_argument('--modelpath', type=str, default="weights/19Dehaze.pth", help=("path to the model .pth files"))
+parser.add_argument('--modelpath', type=str, default="weights/1nh_haze_Dehaze.pth", help=("path to the model .pth files"))
 parser.add_argument('--inferencepath', type=str, default='C:/Data/dehaze/test/', help=("Path to image folder"))
 parser.add_argument('--imagename', type=str, default='foggy.png', help=("filename of the image"))
 parser.add_argument('--gpu_mode', type=bool, default=True, help=('enable cuda'))
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     PATH = opt.modelpath
     imagepath = (opt.inferencepath + opt.imagename)
     image = Image.open(imagepath)
-    image = image.resize((int(hparams["height"]/opt.scale), int(hparams["width"]/opt.scale)))
+    image = image.resize((int(hparams["height"]), int(hparams["width"])))
     image.save('results/foggy.png')
 
     transformtotensor = transforms.Compose([transforms.ToTensor()])
@@ -55,12 +55,13 @@ if __name__ == '__main__':
     image = image.to(torch.device('cuda'))
     times = []
 
-    start = time.time()
-    out, pseudo = model(image)
-    end = time.time()
-    proctime = round(end -start, 4)
+    for i in range(10):
+        start = time.time()
+        out, pseudo = model(image)
+        end = time.time()
+        proctime = round(end -start, 4)
+        print(proctime)
 
-    print(proctime)
 
     out = transform(out.squeeze(0))
     out.save('results/no_fog.png')
