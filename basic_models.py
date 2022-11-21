@@ -101,19 +101,22 @@ class DepthWiseConv(nn.Module):
         return out
 
 class TransposedUpsample(nn.Module):
-    def __init__(self, in_feat, out_feat, scale = 2, use_dlkcb = True):
+    def __init__(self, in_feat, out_feat, kernel = (10,12), stride = 3, use_dlkcb = True):
         super().__init__()
         self.use_dlkcb = use_dlkcb
-        self.dlkcb = DLKCB(in_feat, out_feat, pad=4)    # if weird stuff happens disable
+        self.dlkcb = DLKCB(in_feat, out_feat,kernel=(10,12), pad=18)    # if weird stuff happens disable
+        self.pad = nn.ConstantPad2d((1,1,5,5), 1)
         if use_dlkcb is False:
             padding = 2
-        self.up = nn.ConvTranspose2d(out_feat, out_feat, 2, 2, padding = 0)
+        self.up = nn.ConvTranspose2d(out_feat, out_feat, 2, stride, padding = 0)
 
     def forward(self,x):
         if self.use_dlkcb is True:
             x = self.dlkcb(x)
 
         out = self.up(x)
+
+        out = self.pad(out)
 
 
         return out

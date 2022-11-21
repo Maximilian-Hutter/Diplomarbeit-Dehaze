@@ -75,7 +75,7 @@ if __name__ == '__main__':
         print("last checkpoint restored")
 
     # define Tensor
-    Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.Tensor
+    Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
     # performance optimizations
     Net = Net.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     writer = SummaryWriter()
 
     
-    
+    print("Starting Training")
 
     for epoch in range(start_epoch, hparams["epochs_nh_haze"]):
         epoch_loss = 0
@@ -124,9 +124,14 @@ if __name__ == '__main__':
             train_acc = torch.sum(generated_image == label)
             epoch_loss += loss.item()
 
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
+            if cuda:
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+
+            else:
+                loss.backward()
+                optimizer.step()
 
             #compute time and compute efficiency and print information
             process_time = time.time() - start_time

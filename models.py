@@ -275,8 +275,10 @@ class Shallow(nn.Module):
 
         x = self.up1(x)
         x = torch.add(x, res2)
+        
         x = self.sha3(x)
         x = self.up2(x)
+        x = F.interpolate(x, scale_factor=0.8)
         x = torch.add(x,res1)
         x = self.sha4(x)
         shares = x
@@ -289,7 +291,8 @@ class Shallow(nn.Module):
 class Deep(nn.Module):
     def __init__(self, in_feat, inner_feat, out_feat, num_mhablock, num_parallel_conv, kernel_list, pad_list):
         super(Deep,self).__init__()
-        self.conv = ConvBlock(in_feat, in_feat)
+        self.downx = ConvBlock(in_feat, in_feat, stride=2)
+        self.downdense = ConvBlock(in_feat, in_feat, stride=2)
         self.aff = AdaptiveFeatureFusion()
         self.conv1 = ConvBlock(in_feat, inner_feat)
 
@@ -299,14 +302,18 @@ class Deep(nn.Module):
 
         self.mhablocks = nn.Sequential(*m)
 
+        self.up = TransposedUpsample(inner_feat, inner_feat)
+
         self.tail = TailModule(inner_feat, out_feat, 3, 0, 0)
 
     def forward(self,x, dense):
 
-        x = self.conv(x)
+        x = self.downx(x)
+        dense = self.downdense(dense)
         x = self.aff(x, dense)
         x = self.conv1(x)
         x = self.mhablocks(x)
+        x = self.up(x)
         out = self.tail(x)
 
         return out
@@ -315,10 +322,10 @@ class Dehaze(nn.Module):
     def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24]):
         super(Dehaze, self).__init__()
 
-        self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list).to(torch.device("cuda:0")) # filter 256
-        self.dense = DensityEstimation(6,3, 4, 0, 0).to(torch.device("cuda:0"))
-        self.aff = AdaptiveFeatureFusion().to(torch.device("cuda:0"))
-        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list).to(torch.device("cuda:0")) # filter 16
+        self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list)#.to(torch.device("cuda:0")) # filter 256
+        self.dense = DensityEstimation(6,3, 4, 0, 0)#.to(torch.device("cuda:0"))
+        self.aff = AdaptiveFeatureFusion()#.to(torch.device("cuda:0"))
+        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list)#.to(torch.device("cuda:0")) # filter 16
 
     def forward(self, hazy):
 
@@ -328,6 +335,8 @@ class Dehaze(nn.Module):
 
         x = self.aff(pseudo, hazy)
         x = self.deep(x, density)
+        hazy = F.interpolate(hazy, scale_factor=1.25)
+        pseudo = F.interpolate(pseudo, scale_factor=1.25)
 
         out = torch.add(x, hazy)
         out = torch.add(x, pseudo)
