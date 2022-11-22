@@ -64,9 +64,9 @@ class TailModule(nn.Module):
         x = self.conv1(x)
         x = self.elu(x)
         x = self.conv2(x)
-        out = self.tanh(x)
+        x = self.tanh(x)
 
-        return out
+        return x
 
 class MHA(nn.Module):
     def __init__(self, in_feat, out_feat, num_parallel_conv, kernel_list, pad_list, groups):
@@ -110,9 +110,9 @@ class MHA(nn.Module):
         x = self.lrelu(x)
         x = self.convsha(x)
         x = self.sha(x)
-        out = torch.add(res,x)
+        x = torch.add(res,x)
 
-        return out
+        return x
 
 class MHAC(nn.Module):
     def __init__(self, in_feat, inner_feat, out_feat, num_parallel_conv, kernel_list, pad_list, groups, kernel = 3):
@@ -126,9 +126,9 @@ class MHAC(nn.Module):
 
         mhaout = self.mha(x)
         cotout = self.cot(x)
-        out = self.aff(mhaout, cotout)
+        x = self.aff(mhaout, cotout)
     
-        return out
+        return x
         
 class SHA(nn.Module):
     def __init__(self, in_feat, out_feat, groups, kernel = 3, downsample = False):
@@ -188,8 +188,8 @@ class SHA(nn.Module):
         x1 = self.conv2(x1)
         x2 = self.conv2(x2)
         
-        out = torch.mul(x1,x2)
-        out = self.sigmoid(out)
+        x = torch.mul(x1,x2)
+        x = self.sigmoid(x)
 
         if self.downsample is True:
             res = self.down(res)
@@ -197,9 +197,9 @@ class SHA(nn.Module):
         if self.in_feat is not self.out_feat:
             res = self.convres(x)
 
-        out = torch.mul(out,res)
+        x = torch.mul(x,res)
 
-        return out
+        return x
 
 class AdaptiveFeatureFusion(nn.Module):
     def __init__(self):
@@ -211,9 +211,9 @@ class AdaptiveFeatureFusion(nn.Module):
 
     def forward(self,x, y):
 
-        out = torch.add(self.sig1(x), self.sig2(y))
+        x = torch.add(self.sig1(x), self.sig2(y))
         
-        return out
+        return x
 
 class DensityEstimation(nn.Module):
     def __init__(self, in_feat, kernel, groups, padw, padh, first_conv_feat = 64):
@@ -234,11 +234,11 @@ class DensityEstimation(nn.Module):
         x = self.elu(x)
         x = self.sha(x)
         x = self.conv1(x)
-        out = self.sigmoid(x)
+        x = self.sigmoid(x)
 
-        out = torch.mul(out, res)
+        x = torch.mul(x, res)
 
-        return out
+        return x
 
 class Shallow(nn.Module):
     def __init__(self, in_feat, inner_feat, num_mhac, num_parallel_conv, kernel_list, pad_list):
@@ -273,24 +273,24 @@ class Shallow(nn.Module):
 
         x = self.mhacblock(x)
 
-        print(x.shape)
+        #print(x.shape)
         x = self.up1(x)
-        print(x.shape)
-        print(res2.shape)
+        #print(x.shape)
+        #print(res2.shape)
         x = torch.add(x, res2)
         
         x = self.sha3(x)
         x = self.up2(x)
-        res1 = F.interpolate(res1, scale_factor=1.25)
+        #res1 = F.interpolate(res1, scale_factor=1.25)
         x = torch.add(x,res1)
         x = self.sha4(x)
         shares = x
 
-        out = self.tail(x)
+        x = self.tail(x)
 
-        res = F.interpolate(res, scale_factor=1.25)
-        out = torch.add(out, res)
-        return out, shares
+        #res = F.interpolate(res, scale_factor=1.25)
+        x = torch.add(x, res)
+        return x, shares
 
 class Deep(nn.Module):
     def __init__(self, in_feat, inner_feat, out_feat, num_mhablock, num_parallel_conv, kernel_list, pad_list):
@@ -318,33 +318,36 @@ class Deep(nn.Module):
         x = self.conv1(x)
         x = self.mhablocks(x)
         x = self.up(x)
-        out = self.tail(x)
+        x = self.tail(x)
 
-        return out
+        return x
 
 class Dehaze(nn.Module):
-    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24]):
+    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24], gpu_mode = True):
         super(Dehaze, self).__init__()
 
-        self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list)#.to(torch.device("cuda:0")) # filter 256
-        self.dense = DensityEstimation(6,3, 4, 0, 0)#.to(torch.device("cuda:0"))
-        self.aff = AdaptiveFeatureFusion()#.to(torch.device("cuda:0"))
-        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list)#.to(torch.device("cuda:0")) # filter 16
+        # if gpu_mode is True:
+        #     self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list).to(torch.device("cuda:0")) # filter 256
+        #     self.dense = DensityEstimation(6,3, 4, 0, 0).to(torch.device("cuda:0"))
+        #     self.aff = AdaptiveFeatureFusion().to(torch.device("cuda:0"))
+        #     self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list).to(torch.device("cuda:0")) # filter 16
+        # else:
+        self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list) # filter 256
+        self.dense = DensityEstimation(6,3, 4, 0, 0)
+        self.aff = AdaptiveFeatureFusion()
+        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list) # filter 16
 
     def forward(self, hazy):
 
         pseudo, shares = self.shallow(hazy)
-        hazy = F.interpolate(hazy, scale_factor=1.25)
         density = self.dense(pseudo, hazy)
         density = torch.mul(density, shares)
 
 
         x = self.aff(pseudo, hazy)
         x = self.deep(x, density)
-        pseudo = F.interpolate(pseudo, scale_factor=1.3)
-        hazy = F.interpolate(hazy, scale_factor=1.3)
 
-        out = torch.add(x, hazy)
-        out = torch.add(x, pseudo)
+        x = torch.add(x, hazy)
+        x = torch.add(x, pseudo)
 
-        return out, pseudo
+        return x, pseudo

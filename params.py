@@ -1,7 +1,7 @@
 hparams = {
     "seed": 123,
     "gpus": 1,
-    "gpu_mode": False,
+    "gpu_mode": True,
     "crop_size": None,
     "resume": False,
     "train_data_path": "C:/Data/dehaze/prepared/",
@@ -12,15 +12,15 @@ hparams = {
     "batch_size": 1,
     "crit_lambda": 1,
     "threads": 0,
-    "height":1280, #1280 other sizes do not work 
-    "width":720,    #720 other sizes do not work 
+    "height":512, #1280 other sizes do not work 
+    "width":288,    #720 other sizes do not work 
     "lr": 0.0004,
     "beta1": 0.9,
     "beta2": 0.999,
     "mhac_filter": 64,
     "mha_filter": 8,
-    "num_mhablock": 3,
-    "num_mhac": 4,
+    "num_mhablock": 8,
+    "num_mhac": 10,
     "num_parallel_conv": 2,
     "kernel_list": [3,5,7],
     "pad_list": [4,12,24],

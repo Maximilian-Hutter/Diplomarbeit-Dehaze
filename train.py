@@ -39,7 +39,7 @@ if __name__ == '__main__':
     dataloader_cityscapes = DataLoader(ImageDataset(hparams["train_data_path"] + "cityscapes",size,hparams["crop_size"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
 
     # define the Network
-    Net = Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"])
+    Net = Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"], hparams["gpu_mode"])
 
     # print Network parameters
     pytorch_params = sum(p.numel() for p in Net.parameters())
@@ -79,8 +79,8 @@ if __name__ == '__main__':
 
     # performance optimizations
     Net = Net.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
-    torch.autograd.profiler.emit_nvtx(enabled=False)
-    torch.backends.cudnn.benchmark = True
+    #torch.autograd.profiler.emit_nvtx(enabled=False)
+    #torch.backends.cudnn.benchmark = True
     scaler = torch.cuda.amp.GradScaler()
 
     writer = SummaryWriter()
@@ -109,11 +109,19 @@ if __name__ == '__main__':
             for param in Net.parameters():
                 param.grad = None
 
-            with torch.cuda.amp.autocast():
-                generated_image, pseudo = Net(img)
-                chabonnier_gen = criterion(generated_image, label)
-                chabonnier_pseudo = criterion(pseudo, label)
-                loss = chabonnier_gen + chabonnier_pseudo
+            with torch.profiler.profile(
+                activities=[
+                    torch.profiler.ProfilerActivity.CPU,
+                    torch.profiler.ProfilerActivity.CUDA,
+                ]
+            ) as p:
+                with torch.cuda.amp.autocast():
+                    generated_image, pseudo = Net(img)
+                    chabonnier_gen = criterion(generated_image, label)
+                    chabonnier_pseudo = criterion(pseudo, label)
+                    loss = chabonnier_gen + chabonnier_pseudo
+
+            print(p.key_averages().table(sort_by="self_cuda_time_total", row_limit=-1))
             
             
             if hparams["batch_size"] == 1:

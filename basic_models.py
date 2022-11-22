@@ -31,9 +31,9 @@ class DLKCB(nn.Module):
         x = self.pad(x)
         x = self.dwconv(x)
         x = self.dwdconv(x)
-        out = self.conv2(x)
+        x = self.conv2(x)
 
-        return out
+        return x
 
 class CEFN(nn.Module):
     def __init__(self,feat,pool_kernel,pool_stride, shape):
@@ -72,10 +72,10 @@ class CEFN(nn.Module):
         x2 = self.linear4(x2)
         x2 = self.sigmoid(x2)
 
-        out = torch.mul(x,x2)
-        out = torch.add(out,res)
+        x = torch.mul(x,x2)
+        x = torch.add(x,res)
 
-        return out
+        return x
         
 class ConvBlock(nn.Module):
     def __init__(self, in_feat, out_feat,kernel_size = 3, stride = 1, pad = 1, dilation = 1, groups = 1):
@@ -85,8 +85,8 @@ class ConvBlock(nn.Module):
 
     def forward(self,x):
 
-        out = self.conv(x)
-        return out
+        x = self.conv(x)
+        return x
 
 class DepthWiseConv(nn.Module):
     def __init__(self, in_feat, out_feat, kernel_size, stride,pad, dilation):
@@ -97,28 +97,26 @@ class DepthWiseConv(nn.Module):
     
     def forward(self,x):
         x = self.depth_conv(x)
-        out = self.point_conv(x)
-        return out
+        x = self.point_conv(x)
+        return x
 
 class TransposedUpsample(nn.Module):
-    def __init__(self, in_feat, out_feat, kernel = (10,12), stride = 3, use_dlkcb = True):
+    def __init__(self, in_feat, out_feat, kernel = 11, stride = 2, use_dlkcb = True):
         super().__init__()
         self.use_dlkcb = use_dlkcb
-        self.dlkcb = DLKCB(in_feat, out_feat,kernel, pad=18)    # if weird stuff happens disable
-        self.pad = nn.ConstantPad2d((1,1,5,5), 1)
+    
+        self.dlkcb = DLKCB(in_feat, out_feat,kernel, pad=60)    # if weird stuff happens disable
+
         if use_dlkcb is False:
             padding = 2
         self.up = nn.ConvTranspose2d(out_feat, out_feat, 2, stride, padding = 0)
 
     def forward(self,x):
+
         if self.use_dlkcb is True:
             x = self.dlkcb(x)
 
-        print(x.shape)
-        out = self.up(x)
-        print(out.shape)
+        x = self.up(x)
+        #print(out.shape)
 
-        out = self.pad(out)
-
-
-        return out
+        return x
