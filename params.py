@@ -12,14 +12,14 @@ hparams = {
     "batch_size": 1,
     "crit_lambda": 1,
     "threads": 0,
-    "height":1280, #1280
-    "width":720,    #720
+    "height":1280, #1280 other sizes do not work 
+    "width":720,    #720 other sizes do not work 
     "lr": 0.0004,
     "beta1": 0.9,
     "beta2": 0.999,
-    "mhac_filter": 256,
+    "mhac_filter": 64,
     "mha_filter": 8,
-    "num_mhablock": 2,
+    "num_mhablock": 3,
     "num_mhac": 4,
     "num_parallel_conv": 2,
     "kernel_list": [3,5,7],

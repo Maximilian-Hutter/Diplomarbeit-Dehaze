@@ -104,7 +104,7 @@ class TransposedUpsample(nn.Module):
     def __init__(self, in_feat, out_feat, kernel = (10,12), stride = 3, use_dlkcb = True):
         super().__init__()
         self.use_dlkcb = use_dlkcb
-        self.dlkcb = DLKCB(in_feat, out_feat,kernel=(10,12), pad=18)    # if weird stuff happens disable
+        self.dlkcb = DLKCB(in_feat, out_feat,kernel, pad=18)    # if weird stuff happens disable
         self.pad = nn.ConstantPad2d((1,1,5,5), 1)
         if use_dlkcb is False:
             padding = 2
@@ -114,7 +114,9 @@ class TransposedUpsample(nn.Module):
         if self.use_dlkcb is True:
             x = self.dlkcb(x)
 
+        print(x.shape)
         out = self.up(x)
+        print(out.shape)
 
         out = self.pad(out)
 

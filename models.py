@@ -273,18 +273,22 @@ class Shallow(nn.Module):
 
         x = self.mhacblock(x)
 
+        print(x.shape)
         x = self.up1(x)
+        print(x.shape)
+        print(res2.shape)
         x = torch.add(x, res2)
         
         x = self.sha3(x)
         x = self.up2(x)
-        x = F.interpolate(x, scale_factor=0.8)
+        res1 = F.interpolate(res1, scale_factor=1.25)
         x = torch.add(x,res1)
         x = self.sha4(x)
         shares = x
 
         out = self.tail(x)
 
+        res = F.interpolate(res, scale_factor=1.25)
         out = torch.add(out, res)
         return out, shares
 
@@ -330,13 +334,15 @@ class Dehaze(nn.Module):
     def forward(self, hazy):
 
         pseudo, shares = self.shallow(hazy)
+        hazy = F.interpolate(hazy, scale_factor=1.25)
         density = self.dense(pseudo, hazy)
         density = torch.mul(density, shares)
 
+
         x = self.aff(pseudo, hazy)
         x = self.deep(x, density)
-        hazy = F.interpolate(hazy, scale_factor=1.25)
-        pseudo = F.interpolate(pseudo, scale_factor=1.25)
+        pseudo = F.interpolate(pseudo, scale_factor=1.3)
+        hazy = F.interpolate(hazy, scale_factor=1.3)
 
         out = torch.add(x, hazy)
         out = torch.add(x, pseudo)
