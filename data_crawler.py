@@ -1,0 +1,1 @@
+PATH = "https://webcams2.asfinag.at/webcamviewer/SingleScreenServlet//showcam?user=webcamstartseite&wcsid=" #https://webcams2.asfinag.at/webcamviewer/SingleScreenServlet//showcam?user=webcamstartseite&wcsid=S004_006,870_2_00072519

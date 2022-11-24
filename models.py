@@ -127,6 +127,7 @@ class MHAC(nn.Module):
         mhaout = self.mha(x)
         cotout = self.cot(x)
         x = self.aff(mhaout, cotout)
+        
     
         return x
         
@@ -163,6 +164,7 @@ class SHA(nn.Module):
         self.down = nn.Upsample(scale_factor=0.5)
     def forward(self,x):
         res = x
+        
         havg = self.avgh(x)
         hmax = self.maxh(x)
         h = torch.add(havg, hmax)
@@ -178,6 +180,7 @@ class SHA(nn.Module):
 
         x = torch.cat((h,v), dim= 1)
         x = self.shuffle(x)
+        
         x = self.conv1(x)
         x = self.relu6(x)
         x = torch.split(x,self.in_feat, dim = 1)
@@ -189,6 +192,7 @@ class SHA(nn.Module):
         x2 = self.conv2(x2)
         
         x = torch.mul(x1,x2)
+        
         x = self.sigmoid(x)
 
         if self.downsample is True:
@@ -337,6 +341,7 @@ class Dehaze(nn.Module):
         self.aff = AdaptiveFeatureFusion()
         self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list) # filter 16
 
+        self.tail = ImageOutput(6, 3, 1)
     def forward(self, hazy):
 
         pseudo, shares = self.shallow(hazy)
@@ -347,7 +352,9 @@ class Dehaze(nn.Module):
         x = self.aff(pseudo, hazy)
         x = self.deep(x, density)
 
-        x = torch.add(x, hazy)
-        x = torch.add(x, pseudo)
+        x = torch.mul(x, pseudo)
+        x = torch.add(x, hazy, alpha=0.5)
+
+
 
         return x, pseudo

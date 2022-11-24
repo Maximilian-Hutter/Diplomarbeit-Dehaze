@@ -27,8 +27,8 @@ class DLKCB(nn.Module):
         self.conv2 = nn.Conv2d(in_feat, out_feat, 1)
 
     def forward(self,x):
-        x = self.conv1(x)
         x = self.pad(x)
+        x = self.conv1(x)
         x = self.dwconv(x)
         x = self.dwdconv(x)
         x = self.conv2(x)
@@ -118,5 +118,20 @@ class TransposedUpsample(nn.Module):
 
         x = self.up(x)
         #print(out.shape)
+
+        return x
+
+class ImageOutput(nn.Module):
+    def __init__(self, in_feat, out_feat = 3, stride = 1):
+        super().__init__()
+
+        self.trconv = nn.Conv2d(in_feat, out_feat, 3, 1 ,1)
+        self.norm = nn.InstanceNorm2d(out_feat)
+        self.outconv = nn.Conv2d(out_feat, out_feat, 1)
+
+    def forward(self,x):
+        x = self.trconv(x)
+        x = self.norm(x)
+        x = self.outconv(x)
 
         return x

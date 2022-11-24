@@ -10,17 +10,18 @@ hparams = {
     "epochs_nh_haze": 150,
     "epochs_cityscapes": 500,
     "batch_size": 1,
-    "crit_lambda": 1,
+    "gen_lambda": 0.8,
+    "pseudo_lambda": 0.3,
     "threads": 0,
-    "height":512, #1280 other sizes do not work 
-    "width":288,    #720 other sizes do not work 
+    "height":248, #1280, 512, 288 niedrigste zahl = 248
+    "width":248,    #720, 288, 288 solange durch 8 teilbar & >= 248
     "lr": 0.0004,
     "beta1": 0.9,
     "beta2": 0.999,
-    "mhac_filter": 64,
-    "mha_filter": 8,
-    "num_mhablock": 8,
-    "num_mhac": 10,
+    "mhac_filter": 256,  # 256
+    "mha_filter": 16,    #16
+    "num_mhablock": 5,  # 8
+    "num_mhac": 7, # 10
     "num_parallel_conv": 2,
     "kernel_list": [3,5,7],
     "pad_list": [4,12,24],

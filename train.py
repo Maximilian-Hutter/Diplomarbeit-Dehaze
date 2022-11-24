@@ -75,7 +75,8 @@ if __name__ == '__main__':
         print("last checkpoint restored")
 
     # define Tensor
-    Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
+
+    #Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
     # performance optimizations
     Net = Net.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
@@ -97,9 +98,9 @@ if __name__ == '__main__':
         for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_nh_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
 
             start_time = time.time()
-            img = Variable(imgs["img"].type(Tensor))
+            img = Variable(imgs["img"])
             img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
-            label = Variable(imgs["label"].type(Tensor))
+            label = Variable(imgs["label"])
 
             if cuda:    # put variables to gpu
                 img = img.to(gpus_list[0])
@@ -109,21 +110,12 @@ if __name__ == '__main__':
             for param in Net.parameters():
                 param.grad = None
 
-            with torch.profiler.profile(
-                activities=[
-                    torch.profiler.ProfilerActivity.CPU,
-                    torch.profiler.ProfilerActivity.CUDA,
-                ]
-            ) as p:
-                with torch.cuda.amp.autocast():
-                    generated_image, pseudo = Net(img)
-                    chabonnier_gen = criterion(generated_image, label)
-                    chabonnier_pseudo = criterion(pseudo, label)
-                    loss = chabonnier_gen + chabonnier_pseudo
-
-            print(p.key_averages().table(sort_by="self_cuda_time_total", row_limit=-1))
-            
-            
+            with torch.cuda.amp.autocast():
+                generated_image, pseudo = Net(img)
+                chabonnier_gen = criterion(generated_image, label)
+                chabonnier_pseudo = criterion(pseudo, label)
+                loss = hparams["gen_lambda"] * chabonnier_gen + hparams["pseudo_lambda"] * chabonnier_pseudo
+       
             if hparams["batch_size"] == 1:
                 if i == 1:
                     myutils.save_trainimg(pseudo, epoch, "pseudo_nh_haze")
@@ -168,9 +160,9 @@ if __name__ == '__main__':
         for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_o_haze)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
 
             start_time = time.time()
-            img = Variable(imgs["img"].type(Tensor))
+            img = Variable(imgs["img"])
             img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
-            label = Variable(imgs["label"].type(Tensor))
+            label = Variable(imgs["label"])
 
 
             img = img.to(torch.device('cuda'))
@@ -184,7 +176,7 @@ if __name__ == '__main__':
                 generated_image, pseudo = Net(img)
                 chabonnier_gen = criterion(generated_image, label)
                 chabonnier_pseudo = criterion(pseudo, label)
-                loss = chabonnier_gen + chabonnier_pseudo
+                loss = hparams["gen_lambda"] * chabonnier_gen + hparams["pseudo_lambda"] * chabonnier_pseudo
             
             if hparams["batch_size"] == 1:
                 if i == 1:
@@ -225,9 +217,9 @@ if __name__ == '__main__':
         for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader_cityscapes)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
 
             start_time = time.time()
-            img = Variable(imgs["img"].type(Tensor))
+            img = Variable(imgs["img"])
             img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
-            label = Variable(imgs["label"].type(Tensor))
+            label = Variable(imgs["label"])
 
             if cuda:    # put variables to gpu
                 img = img.to(gpus_list[0])
@@ -241,7 +233,7 @@ if __name__ == '__main__':
                 generated_image, pseudo = Net(img)
                 chabonnier_gen = criterion(generated_image, label)
                 chabonnier_pseudo = criterion(pseudo, label) 
-                loss = chabonnier_gen + chabonnier_pseudo
+                loss = hparams["gen_lambda"] * chabonnier_gen + hparams["pseudo_lambda"] * chabonnier_pseudo
             
             
             if hparams["batch_size"] == 1:
