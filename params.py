@@ -13,19 +13,21 @@ hparams = {
     "gen_lambda": 0.8,
     "pseudo_lambda": 0.3,
     "threads": 0,
-    "height":248, #1280, 512, 288 niedrigste zahl = 248
-    "width":248,    #720, 288, 288 solange durch 8 teilbar & >= 248
+    "height":512, #1280, 512, 288 niedrigste zahl = 248
+    "width":288,    #720, 288, 288 solange durch 8 teilbar & >= 248
     "lr": 0.0004,
     "beta1": 0.9,
     "beta2": 0.999,
-    "mhac_filter": 256,  # 256
-    "mha_filter": 16,    #16
-    "num_mhablock": 5,  # 8
-    "num_mhac": 7, # 10
+    "mhac_filter": 64,  # 256
+    "mha_filter": 8,    #16
+    "num_mhablock": 3,  # 8
+    "num_mhac": 4, # 10
     "num_parallel_conv": 2,
     "kernel_list": [3,5,7],
     "pad_list": [4,12,24],
+    "start_epoch": 0,
     "save_folder": "./weights/",
     "model_type": "Dehaze",
+    "scale_factor": 1,
     "snapshots": 1
 }

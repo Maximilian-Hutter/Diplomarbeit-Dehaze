@@ -121,17 +121,16 @@ class TransposedUpsample(nn.Module):
 
         return x
 
-class ImageOutput(nn.Module):
-    def __init__(self, in_feat, out_feat = 3, stride = 1):
+class Upsample(nn.Module):
+    def __init__(self, in_feat, scale_factor):
         super().__init__()
 
-        self.trconv = nn.Conv2d(in_feat, out_feat, 3, 1 ,1)
-        self.norm = nn.InstanceNorm2d(out_feat)
-        self.outconv = nn.Conv2d(out_feat, out_feat, 1)
+        self.conv = ConvBlock(in_feat, in_feat * scale_factor * scale_factor, 1, 1,0)
+        self.up = nn.PixelShuffle(scale_factor)
 
     def forward(self,x):
-        x = self.trconv(x)
-        x = self.norm(x)
-        x = self.outconv(x)
+
+        x = self.conv(x)
+        x = self.up(x)
 
         return x

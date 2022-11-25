@@ -8,8 +8,9 @@ import torchvision.transforms as transforms
 import myutils
 
 class ImageDataset(Dataset):
-    def __init__(self, root, size,crop_size,augmentation=0):
+    def __init__(self, root, size,crop_size,scale_factor,augmentation=0):
 
+        self.scale_factor = scale_factor
         self.root = root
         self.augmentation = augmentation
         self.crop_size = crop_size
@@ -22,7 +23,7 @@ class ImageDataset(Dataset):
         label = Image.open(self.root + "/gt/" + self.gt[index % len(self.imgs)])
         if self.crop_size != None:
             label = myutils.crop_center(label, self.crop_size, self.crop_size)  # crop image if the images are not the same size
-        label = label.resize(size = (int(self.size[0]), int(self.size[1])))  # change size
+        label = label.resize(size = (int(self.size[0] * self.scale_factor), int(self.size[1]* self.scale_factor)))  # change size
 
         img = Image.open(self.root + "/input/" + self.imgs[index % len(self.imgs)])
         if self.crop_size != None:

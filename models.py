@@ -327,7 +327,7 @@ class Deep(nn.Module):
         return x
 
 class Dehaze(nn.Module):
-    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24], gpu_mode = True):
+    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24], gpu_mode = True, scale_factor = 1):
         super(Dehaze, self).__init__()
 
         # if gpu_mode is True:
@@ -341,7 +341,10 @@ class Dehaze(nn.Module):
         self.aff = AdaptiveFeatureFusion()
         self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list) # filter 16
 
-        self.tail = ImageOutput(6, 3, 1)
+        self.scale_factor = scale_factor
+        if scale_factor != 1:
+            self.up = TransposedUpsample(3, 3, 11, scale_factor, False)
+            
     def forward(self, hazy):
 
         pseudo, shares = self.shallow(hazy)
@@ -352,9 +355,12 @@ class Dehaze(nn.Module):
         x = self.aff(pseudo, hazy)
         x = self.deep(x, density)
 
+        if self.scale_factor != 1:
+            x = self.up(x)
+            pseudo = F.interpolate(pseudo, scale_factor=self.scale_factor)
+            hazy = F.interpolate(hazy, scale_factor=self.scale_factor)
+
         x = torch.mul(x, pseudo)
         x = torch.add(x, hazy, alpha=0.5)
-
-
 
         return x, pseudo
