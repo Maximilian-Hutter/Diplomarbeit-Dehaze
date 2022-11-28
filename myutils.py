@@ -6,6 +6,18 @@ from prefetch_generator import BackgroundGenerator
 import time
 import torch
 
+def print_size(Net):
+    param_size = 0
+    for param in Net.parameters():
+        param_size += param.nelement() * param.element_size()
+    buffer_size = 0
+    for buffer in Net.buffers():
+        buffer_size += buffer.nelement() * buffer.element_size()
+
+    size_all_mb = (param_size + buffer_size) / 1024**2
+    print('model size: {:.3f}MB'.format(size_all_mb))
+
+
 def checkpointGenerate(epoch, hparams, Net, name = None):
     model_out_path = hparams["save_folder"]+str(epoch)+ str(name) + hparams["model_type"]+".pth".format(epoch)
     torch.save(Net.state_dict(), model_out_path)
@@ -95,4 +107,4 @@ def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startn
                 img.save(outpath + file)
 
 if __name__ == "__main__":
-    prepare_imgdatadir("C:/Data/dehaze/unprepared/cityscapes/input/", "C:/Data/dehaze/prepared/cityscapes/input/" ,substring = None ,numerate=True,startnum = 0, size=(1920,1080), multiple_dirs=False)
+    prepare_imgdatadir("C:/Data/dehaze/SOTS/indoor/hazy", "C:/Data/dehaze/test/hazy/" ,substring = "_8" ,numerate=True,startnum = 0, size=(1920,1080), multiple_dirs=False)

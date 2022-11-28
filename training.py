@@ -4,19 +4,24 @@ import torch.nn
 from prefetch_generator import BackgroundGenerator
 from tqdm import tqdm
 import myutils
+from torch.utils.tensorboard import SummaryWriter
 from torch.autograd import Variable
+from models import Dehaze
 
-class Training():
-    def __init__(self, hparams, Net, writer, scaler, optimizer) :
+class Train():
+    def __init__(self, hparams, Net, optimizer, criterion) :
     
-        self.scaler = scaler
-        self.writer = writer
+        Net = Net.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
+        torch.autograd.profiler.emit_nvtx(enabled=False)
+        torch.backends.cudnn.benchmark = True
+        scaler = torch.cuda.amp.GradScaler()
+        writer = SummaryWriter()
+
+        self.criterion = criterion
         self.gpus_list = range(hparams["gpus"])
         self.hparams = hparams
         self.Net = Net
         self.optimizer = optimizer
-        pass
-
 
     def train(self, dataloader,datasetname, epochs):
         for epoch in range(self.hparams["start_epoch"], epochs):
@@ -48,8 +53,8 @@ class Training():
         
                 if self.hparams["batch_size"] == 1:
                     if i == 1:
-                        myutils.save_trainimg(pseudo, epoch, "pseudo" + datasetname)
-                        myutils.save_trainimg(generated_image, epoch, "generated" + datasetname)
+                        myutils.save_trainimg(pseudo, epoch, "pseudo_" + datasetname)
+                        myutils.save_trainimg(generated_image, epoch, "generated_" + datasetname)
 
                 train_acc = torch.sum(generated_image == label)
                 epoch_loss += loss.item()
@@ -80,3 +85,52 @@ class Training():
         print("\n")
         epoch_time = time.time()
 
+def sparse_training(Net, optimizer, dataloader, criterion, hparams, scaler):
+        epoch_loss = 0
+        Net.train()
+
+        for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
+
+            img = Variable(imgs["img"])
+            img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
+            label = Variable(imgs["label"])
+
+            img = img.cuda()
+            label = label.cuda()
+
+            # start train
+            for param in Net.parameters():
+                param.grad = None
+
+            with torch.cuda.amp.autocast():
+                generated_image, pseudo = Net(img)
+                chabonnier_gen = criterion(generated_image, label)
+                chabonnier_pseudo = criterion(pseudo, label)
+                loss = hparams["gen_lambda"] * chabonnier_gen + hparams["pseudo_lambda"] * chabonnier_pseudo
+
+            epoch_loss += loss.item()
+
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+
+def test(Net, dataloader):
+    acc = 0
+    Net.eval()
+    for i, imgs in enumerate(BackgroundGenerator(tqdm(dataloader)),start=0):#:BackgroundGenerator(dataloader,1))):    # put progressbar
+        img = Variable(imgs["img"])
+        img = img.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
+        label = Variable(imgs["label"])
+
+        img = img.cuda()
+        label = label.cuda()
+
+        with torch.cuda.amp.autocast():
+            generated_image, _ = Net(img)
+
+        accuracy = torch.abs((generated_image == label))
+
+        acc += accuracy
+
+    return acc
+            
