@@ -2,6 +2,7 @@
 *ipynb
 /trainimg
 /runs
+/weights
 /results
 .onnx
 /onnx-tensorflow
