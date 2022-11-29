@@ -31,7 +31,7 @@ def objective(trial):
     testloader = DataLoader(ImageDataset("C:/Data/dehaze/test",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
     
 
-    for i in range(1):    
+    for i in range(10):    
         sparse_training(model, optimizer, dataloader, criterion, hparams, scaler)
 
 
@@ -60,7 +60,7 @@ def objective(trial):
     return parameter
 
 study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
-study.optimize(objective, timeout=32000)
+study.optimize(objective, timeout=31000)
 
 best_trial = study.best_trial
 
