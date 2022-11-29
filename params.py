@@ -18,10 +18,10 @@ hparams = {
     "lr": 0.0004,
     "beta1": 0.9,
     "beta2": 0.999,
-    "mhac_filter": 64,  # 256
-    "mha_filter": 8,    #16
-    "num_mhablock": 3,  # 8
-    "num_mhac": 4, # 10
+    "mhac_filter": 32,  # paper:256, Best: 32
+    "mha_filter": 32,    #16, Best:32
+    "num_mhablock": 4,  # 8, Best:4
+    "num_mhac": 9, # 10, Best:9
     "num_parallel_conv": 2,
     "kernel_list": [3,5,7],
     "pad_list": [4,12,24],
