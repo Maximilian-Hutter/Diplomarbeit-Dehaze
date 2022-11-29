@@ -14,8 +14,8 @@ class Train():
         Net = Net.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
         torch.autograd.profiler.emit_nvtx(enabled=False)
         torch.backends.cudnn.benchmark = True
-        scaler = torch.cuda.amp.GradScaler()
-        writer = SummaryWriter()
+        self.scaler = torch.cuda.amp.GradScaler()
+        self.writer = SummaryWriter()
 
         self.criterion = criterion
         self.gpus_list = range(hparams["gpus"])

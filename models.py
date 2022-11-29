@@ -297,10 +297,15 @@ class Shallow(nn.Module):
         return x, shares
 
 class Deep(nn.Module):
-    def __init__(self, in_feat, inner_feat, out_feat, num_mhablock, num_parallel_conv, kernel_list, pad_list):
+    def __init__(self, in_feat, inner_feat, out_feat, num_mhablock, num_parallel_conv, kernel_list, pad_list,down_deep):
         super(Deep,self).__init__()
-        self.downx = ConvBlock(in_feat, in_feat, stride=2)
-        self.downdense = ConvBlock(in_feat, in_feat, stride=2)
+        self.down_deep = down_deep
+        if down_deep is True:
+            stride = 2
+        else:
+            stride = 1
+        self.downx = ConvBlock(in_feat, in_feat, stride=stride)
+        self.downdense = ConvBlock(in_feat, in_feat, stride=stride)
         self.aff = AdaptiveFeatureFusion()
         self.conv1 = ConvBlock(in_feat, inner_feat)
 
@@ -321,13 +326,14 @@ class Deep(nn.Module):
         x = self.aff(x, dense)
         x = self.conv1(x)
         x = self.mhablocks(x)
-        x = self.up(x)
+        if self.down_deep is True:
+            x = self.up(x)
         x = self.tail(x)
 
         return x
 
 class Dehaze(nn.Module):
-    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24], gpu_mode = True, scale_factor = 1):
+    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24], down_deep = False,gpu_mode = True, scale_factor = 1):
         super(Dehaze, self).__init__()
 
         # if gpu_mode is True:
@@ -339,7 +345,7 @@ class Dehaze(nn.Module):
         self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list) # filter 256
         self.dense = DensityEstimation(6,3, 4, 0, 0)
         self.aff = AdaptiveFeatureFusion()
-        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list) # filter 16
+        self.deep = Deep(3, mha_filter, 3, num_mhablock, num_parallel_conv, kernel_list, pad_list, down_deep) # filter 16
 
         self.scale_factor = scale_factor
         if scale_factor != 1:

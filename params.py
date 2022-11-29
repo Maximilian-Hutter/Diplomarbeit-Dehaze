@@ -12,8 +12,9 @@ hparams = {
     "batch_size": 1,
     "gen_lambda": 0.8,
     "pseudo_lambda": 0.3,
+    "down_deep": False,
     "threads": 0,
-    "height":512, #1280, 512, 288 niedrigste zahl = 248
+    "height":288, #1280, 512, 288 niedrigste zahl = 248
     "width":288,    #720, 288, 288 solange durch 8 teilbar & >= 248
     "lr": 8.214e-06,
     "beta1": 0.9595,
