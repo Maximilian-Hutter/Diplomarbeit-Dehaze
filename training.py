@@ -128,9 +128,10 @@ def test(Net, dataloader):
         with torch.cuda.amp.autocast():
             generated_image, _ = Net(img)
 
-        accuracy = torch.abs((generated_image == label))
+        accuracy = (generated_image == label).sum()
 
         acc += accuracy
 
-    return acc
+    acc = acc/dataloader.__len__()
+    return acc.item()
             

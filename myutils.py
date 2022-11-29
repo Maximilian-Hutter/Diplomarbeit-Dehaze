@@ -107,4 +107,4 @@ def prepare_imgdatadir(path, outpath, substring = None, numerate = False, startn
                 img.save(outpath + file)
 
 if __name__ == "__main__":
-    prepare_imgdatadir("C:/Data/dehaze/SOTS/indoor/hazy", "C:/Data/dehaze/test/hazy/" ,substring = "_8" ,numerate=True,startnum = 0, size=(1920,1080), multiple_dirs=False)
+    prepare_imgdatadir("C:/Data/dehaze/SOTS/indoor/gt", "C:/Data/dehaze/test/gt/" ,substring = None ,numerate=True,startnum = 0, size=(1920,1080), multiple_dirs=False)
