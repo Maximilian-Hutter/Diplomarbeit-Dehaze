@@ -11,9 +11,9 @@ import torchvision
 from params import hparams
 
 parser = argparse.ArgumentParser(description='PyTorch ESRGANplus')
-parser.add_argument('--modelpath', type=str, default="weights/9nh_haze_Dehaze.pth", help=("path to the model .pth files"))
-parser.add_argument('--inferencepath', type=str, default='C:/Data/dehaze/test/', help=("Path to image folder"))
-parser.add_argument('--imagename', type=str, default='foggy.png', help=("filename of the image"))
+parser.add_argument('--modelpath', type=str, default="weights/49nh_hazeDehaze.pth", help=("path to the model .pth files"))
+parser.add_argument('--inferencepath', type=str, default='C:/Data/dehaze/inference/', help=("Path to image folder"))
+parser.add_argument('--imagename', type=str, default='foggy.jpg', help=("filename of the image"))
 parser.add_argument('--gpu_mode', type=bool, default=True, help=('enable cuda'))
 parser.add_argument('--channels',type=int, default=3, help='number of channels R,G,B for img / number of input dimensions 3 times 2dConv for img')
 parser.add_argument('--filters', type=int, default=8, help="set number of filters")
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     image= image.to(torch.float32)
 
-    model=Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"])
+    model=Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"], hparams["down_deep"])
 
     if hparams["gpu_mode"] == False:
         device = torch.device('cpu')

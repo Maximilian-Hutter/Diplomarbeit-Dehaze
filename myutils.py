@@ -19,7 +19,7 @@ def print_size(Net):
 
 
 def checkpointGenerate(epoch, hparams, Net, name = None):
-    model_out_path = hparams["save_folder"]+str(epoch)+ str(name) + hparams["model_type"]+".pth".format(epoch)
+    model_out_path = hparams["save_folder"]+str(epoch)+ str(name) +"_"+ hparams["model_type"]+".pth".format(epoch)
     torch.save(Net.state_dict(), model_out_path)
     print("Checkpoint saved to {}".format(model_out_path))
 
