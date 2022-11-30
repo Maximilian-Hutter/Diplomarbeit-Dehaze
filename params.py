@@ -12,17 +12,17 @@ hparams = {
     "batch_size": 1,
     "gen_lambda": 0.8,
     "pseudo_lambda": 0.3,
-    "down_deep": False,
+    "down_deep": True,
     "threads": 0,
-    "height":288, #1280, 512, 288 niedrigste zahl = 248
+    "height":512, #1280, 512, 288 niedrigste zahl = 248
     "width":288,    #720, 288, 288 solange durch 8 teilbar & >= 248
-    "lr": 0.0004,
-    "beta1": 0.9,
-    "beta2": 0.999,
-    "mhac_filter": 32,  # paper:256, Best: 32
-    "mha_filter": 32,    #16, Best:32
-    "num_mhablock": 4,  # 8, Best:4
-    "num_mhac": 9, # 10, Best:9
+    "lr": 8.214e-06,
+    "beta1": 0.9595,
+    "beta2": 0.9901,
+    "mhac_filter": 32,  # 256
+    "mha_filter": 8,    #16
+    "num_mhablock": 6,  # 8
+    "num_mhac": 7, # 10
     "num_parallel_conv": 2,
     "kernel_list": [3,5,7],
     "pad_list": [4,12,24],

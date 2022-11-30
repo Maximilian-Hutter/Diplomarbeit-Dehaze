@@ -15,8 +15,8 @@ def objective(trial):
     size = (hparams["height"], hparams["width"])
     scaler = torch.cuda.amp.GradScaler()
     params = {
-              "mhac_filter":trial.suggest_categorical("mhac_filter", [32, 64,128]),
-              "mha_filter":trial.suggest_categorical("mha_filter", [8,16,32, 64]),
+              "mhac_filter":trial.suggest_categorical("mhac_filter", [32, 64]),
+              "mha_filter":trial.suggest_categorical("mha_filter", [16,32, 64]),
               "num_mhablock":trial.suggest_int("num_mhablock", 4,9),
               "num_mhac":trial.suggest_int("num_mhac", 4, 9),
               "down_deep":trial.suggest_categorical("down_deep", [False,True]),
@@ -28,7 +28,7 @@ def objective(trial):
               }
     
     model = Dehaze(params["mhac_filter"], params["mha_filter"], params["num_mhablock"], params["num_mhac"], down_deep=params["down_deep"]).cuda()
-    optimizer = optim.Adam(model.parameters(), lr=params["lr"], betas=(params["beta1"],params["beta2"]))
+    optimizer = optim.Adam(model.parameters(), lr=hparams["lr"], betas=(hparams["beta1"],hparams["beta2"]))
     criterion = ChabonnierLoss(eps = 1e-6).cuda()
     dataloader = DataLoader(ImageDataset(hparams["train_data_path"] + "O-Haze",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
     testloader = DataLoader(ImageDataset("C:/Data/dehaze/test",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
@@ -45,7 +45,7 @@ def objective(trial):
     for buffer in model.buffers():
         buffer_size += buffer.nelement() * buffer.element_size()
     size_all_mb = (param_size + buffer_size) / 1024**2
-    size_weight = 1 / (size_all_mb/8)
+    size_weight = 1 / (size_all_mb/10)
 
     if(size_all_mb <= 8):
         size_weight = 1
@@ -58,12 +58,12 @@ def objective(trial):
     process_time = (end_time-start_time) / testloader.__len__()
 
     print(accuracy)
-    parameter = ((accuracy + 1) / process_time) * size_weight
+    parameter = ((accuracy + 1) / (2 * process_time)) * size_weight
 
     return parameter
 
 study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
-study.optimize(objective, timeout=32000)
+study.optimize(objective, timeout=20000)
 
 best_trial = study.best_trial
 
