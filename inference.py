@@ -11,7 +11,7 @@ import torchvision
 from params import hparams
 
 parser = argparse.ArgumentParser(description='PyTorch ESRGANplus')
-parser.add_argument('--modelpath', type=str, default="weights/49nh_hazeDehaze.pth", help=("path to the model .pth files"))
+parser.add_argument('--modelpath', type=str, default="weights/6nh_haze_Dehaze.pth", help=("path to the model .pth files"))
 parser.add_argument('--inferencepath', type=str, default='C:/Data/dehaze/inference/', help=("Path to image folder"))
 parser.add_argument('--imagename', type=str, default='foggy.jpg', help=("filename of the image"))
 parser.add_argument('--gpu_mode', type=bool, default=True, help=('enable cuda'))
