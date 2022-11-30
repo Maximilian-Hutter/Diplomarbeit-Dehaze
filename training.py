@@ -85,7 +85,7 @@ class Train():
         print("\n")
         epoch_time = time.time()
 
-def sparse_training(Net, optimizer, dataloader, criterion, hparams, scaler):
+def sparse_training(Net, optimizer, dataloader, criterion, params, scaler):
         epoch_loss = 0
         Net.train()
 
@@ -106,7 +106,7 @@ def sparse_training(Net, optimizer, dataloader, criterion, hparams, scaler):
                 generated_image, pseudo = Net(img)
                 chabonnier_gen = criterion(generated_image, label)
                 chabonnier_pseudo = criterion(pseudo, label)
-                loss = hparams["gen_lambda"] * chabonnier_gen + hparams["pseudo_lambda"] * chabonnier_pseudo
+                loss = params["gen_lambda"] * chabonnier_gen + params["pseudo_lambda"] * chabonnier_pseudo
 
             epoch_loss += loss.item()
 

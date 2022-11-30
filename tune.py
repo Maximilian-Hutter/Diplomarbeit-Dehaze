@@ -23,6 +23,8 @@ def objective(trial):
               "lr":trial.suggest_float('learning_rate', 1e-6, 1e-1, log=True),
               "beta1":trial.suggest_float("beta1", 0.85, 1),
               "beta2":trial.suggest_float("beta2", 0.9, 1),
+              "gen_lambda":trial.suggest_float("gen_lambda", 0.1, 1, step=0.1),
+              "pseudo_lambda":trial.suggest_float("pseudo_lambda", 0.1, 1, step=0.1)
               }
     
     model = Dehaze(params["mhac_filter"], params["mha_filter"], params["num_mhablock"], params["num_mhac"], down_deep=params["down_deep"]).cuda()
@@ -33,7 +35,7 @@ def objective(trial):
     
 
     for i in range(1):    
-        sparse_training(model, optimizer, dataloader, criterion, hparams, scaler)
+        sparse_training(model, optimizer, dataloader, criterion, params, scaler)
 
 
     param_size = 0
