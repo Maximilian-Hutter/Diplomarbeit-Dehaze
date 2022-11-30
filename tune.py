@@ -43,7 +43,7 @@ def objective(trial):
     for buffer in model.buffers():
         buffer_size += buffer.nelement() * buffer.element_size()
     size_all_mb = (param_size + buffer_size) / 1024**2
-    size_weight = 1 / (size_all_mb/8)
+    size_weight = 1 / (size_all_mb/10)
 
     if(size_all_mb <= 8):
         size_weight = 1
@@ -56,12 +56,12 @@ def objective(trial):
     process_time = (end_time-start_time) / testloader.__len__()
 
     print(accuracy)
-    parameter = ((accuracy + 1) / process_time) * size_weight
+    parameter = ((accuracy + 1) / (2 * process_time)) * size_weight
 
     return parameter
 
 study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
-study.optimize(objective, n_trials=50)
+study.optimize(objective, timeout=20000)
 
 best_trial = study.best_trial
 
