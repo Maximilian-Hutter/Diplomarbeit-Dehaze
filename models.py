@@ -333,8 +333,10 @@ class Deep(nn.Module):
         return x
 
 class Dehaze(nn.Module):
-    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24], down_deep = False,gpu_mode = True, scale_factor = 1):
+    def __init__(self, mhac_filter = 256, mha_filter = 16,num_mhablock = 10,num_mhac = 8, num_parallel_conv = 2, kernel_list = [3,5,7], pad_list = [4,12,24], down_deep = False,gpu_mode = True, scale_factor = 1, pseudo_alpha = 1, hazy_alpha = 0.5):
         super(Dehaze, self).__init__()
+        self.pseudo_alpha = pseudo_alpha
+        self.hazy_alpha = hazy_alpha
 
         # if gpu_mode is True:
         #     self.shallow = Shallow(3, mhac_filter, num_mhac, num_parallel_conv, kernel_list, pad_list).to(torch.device("cuda:0")) # filter 256
@@ -366,7 +368,7 @@ class Dehaze(nn.Module):
             pseudo = F.interpolate(pseudo, scale_factor=self.scale_factor)
             hazy = F.interpolate(hazy, scale_factor=self.scale_factor)
 
-        x = torch.mul(x, pseudo)
-        x = torch.add(x, hazy, alpha=0.5)
+        x = torch.add(x, pseudo, alpha=self.pseudo_alpha)
+        x = torch.add(x, hazy, alpha=self.hazy_alpha)
 
         return x, pseudo

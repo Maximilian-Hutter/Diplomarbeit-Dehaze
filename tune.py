@@ -24,17 +24,19 @@ def objective(trial):
               "beta1":trial.suggest_float("beta1", 0.85, 1),
               "beta2":trial.suggest_float("beta2", 0.9, 1),
               "gen_lambda":trial.suggest_float("gen_lambda", 0.1, 1, step=0.1),
-              "pseudo_lambda":trial.suggest_float("pseudo_lambda", 0.1, 1, step=0.1)
+              "pseudo_lambda":trial.suggest_float("pseudo_lambda", 0.1, 1, step=0.1),
+              "pseudo_alpha":trial.suggest_float("pseudo_lambda", 0.1, 1, step=0.1),
+              "hazy_alpha":trial.suggest_float("pseudo_lambda", 0.1, 1, step=0.1)
               }
     
-    model = Dehaze(params["mhac_filter"], params["mha_filter"], params["num_mhablock"], params["num_mhac"], down_deep=params["down_deep"]).cuda()
+    model = Dehaze(params["mhac_filter"], params["mha_filter"], params["num_mhablock"], params["num_mhac"], down_deep=params["down_deep"], pseudo_alpha=params["pseudo_alpha"], hazy_alpha=params["hazy_alpha"]).cuda()
     optimizer = optim.Adam(model.parameters(), lr=hparams["lr"], betas=(hparams["beta1"],hparams["beta2"]))
     criterion = ChabonnierLoss(eps = 1e-6).cuda()
     dataloader = DataLoader(ImageDataset(hparams["train_data_path"] + "O-Haze",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
     testloader = DataLoader(ImageDataset("C:/Data/dehaze/test",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
     
 
-    for i in range(1):    
+    for i in range(10):    
         sparse_training(model, optimizer, dataloader, criterion, params, scaler)
 
 
@@ -58,7 +60,7 @@ def objective(trial):
     process_time = (end_time-start_time) / testloader.__len__()
 
     print(accuracy)
-    parameter = ((accuracy + 1) / (2 * process_time)) * size_weight
+    parameter = ((accuracy + 1) / (5 * process_time)) * size_weight
 
     return parameter
 

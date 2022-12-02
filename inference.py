@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     image= image.to(torch.float32)
 
-    model=Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"], hparams["down_deep"])
+    model=Dehaze(hparams["mhac_filter"], hparams["mha_filter"], hparams["num_mhablock"], hparams["num_mhac"], hparams["num_parallel_conv"],hparams["kernel_list"], hparams["pad_list"], hparams["down_deep"], pseudo_alpha= hparams["pseudo_alpha"], hazy_alpha=hparams["hazy_alpha"])
 
     if hparams["gpu_mode"] == False:
         device = torch.device('cpu')
