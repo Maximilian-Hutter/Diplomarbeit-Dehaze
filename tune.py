@@ -45,9 +45,9 @@ def objective(trial):
     for buffer in model.buffers():
         buffer_size += buffer.nelement() * buffer.element_size()
     size_all_mb = (param_size + buffer_size) / 1024**2
-    size_weight = 1 / (size_all_mb/10)
+    size_weight = 1 / (size_all_mb/8)
 
-    if(size_all_mb <= 8):
+    if(size_all_mb <= 7):
         size_weight = 1
 
     torch.save(model.state_dict(), "./tune_saves/" + str(params["mhac_filter"])+","+str(params["mha_filter"])+ ","+str(params["num_mhablock"])+","+ str(params["num_mhac"]) + ".pth")

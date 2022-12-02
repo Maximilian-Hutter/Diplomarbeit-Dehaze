@@ -20,9 +20,9 @@ hparams = {
     "beta1": 0.9595,
     "beta2": 0.9901,
     "mhac_filter": 32,  # 256
-    "mha_filter": 8,    #16
-    "num_mhablock": 6,  # 8
-    "num_mhac": 7, # 10
+    "mha_filter": 16,    #16
+    "num_mhablock": 8,  # 8
+    "num_mhac": 5, # 10
     "num_parallel_conv": 2,
     "kernel_list": [3,5,7],
     "pad_list": [4,12,24],
