@@ -43,21 +43,99 @@ def web_screenshot(path, filename):
 
 if __name__ == "__main__":
     
-    cities = ["ireland/dublin/"]
+    cities = ["ireland/dublin/",
+              "usa/missouri/stlouis/",
+              "virginislands/stthomas/",
+              "georgia/tbilisi/",
+              "france/corsica/",
+              "costarics/lafortuna/",
+              "canada/ontario/whitney/",
+              "canada/alberta/edmonton/",
+              "canada/toronto/cntower/",
+              "hungary/budapest/",
+              "israel/haifa/",
+              "israel/jerusalem/",
+              "russia/moscow/",
+              "spain/mallorca/",
+              "usa/alaska/sitka/",
+              "usa/arizona/sedona/sevenarches/",
+              "usa/arizona/goodyear/",
+              "usa/california/ojai/",
+              "usa/california/santamonica/",
+              "usa/colorado/breckenridge/",
+              "usa/colorado/denver/",
+              "usa/connecticut/newlondon/",
+              "usa/dc/washingtonmonument/",
+              "usa/dc/cherryblossoms/",
+              "usa/dc/capitol/",
+              "usa/georgia/atlanta/",
+              "usa/illinois/chicago/",
+              "usa/indiana/notredame/",
+              "usa/iowa/spencer/",
+              "usa/kentucky/scottsville/",
+              "usa/maine/peaksisland/",
+              "usa/maine/barharbor/",
+              "usa/maryland/baltimore/",
+              "usa/massachusetts/boston/",
+              "usa/michigan/grandhaven/lakemichigan/",
+              "usa/minnesota/internationalfalls/",
+              "usa/minnesota/saintpaul/",
+              "usa/mississippi/vicksburg/",
+              "usa/missouri/kansascity/",
+              "usa/montana/bigsky/",
+              "usa/newhampshire/brettonwoods/",
+              "usa/newyork/skyline/",
+              "usa/newyork/weehawken/",
+              "usa/newmexico/ruidoso/",
+              "usa/newyork/brooklynbridge/",
+              "usa/newyork/statueofliberty/",
+              "usa/newyork/empirestatebuilding/",
+              "usa/newyork/highline/",
+              "usa/newyork/midtown/skyline/",
+              "usa/newyork/rockefellercenter/",
+              "usa/newyork/lakegeorge/",
+              "usa/newyork/pulaski/",
+              "usa/newyork/stonybrook/",
+              "usa/newyork/montauk/",
+              "usa/northcarolina/hickory/",
+              "usa/northcarolina/manteo/",
+              "usa/northdakota/lakota/",
+              "usa/ohio/cincinnati/",
+              "usa/ohio/cleveland/",
+              "usa/oklahoma/oklahomacity/",
+              "usa/oklahoma/edmond/",
+              "usa/pennsylvania/pittsburgh/",
+              "usa/pennsylvania/philadelphia/",
+              "usa/pennsylvania/franklin/",
+              "usa/southcarolina/kiawahisland/",
+              "usa/tennessee/walland/blackberrymountain/",
+              "usa/tennessee/nashville/",
+              "usa/texas/dallas/",
+              "usa/texas/seagraves/",
+              "usa/texas/lakeway/",
+              "usa/texas/sanantonio/",
+              "usa/texas/laporte/",
+              "usa/texas/houston/",
+              "usa/utah/duckcreekvillage/",
+              "usa/washington/seattle/",
+              "usa/wyoming/jackson/"
+              ]
 
+    fogcity = []
     for city in cities:
         path = "https://www.earthcam.com/world/" + city
 
         condition = weather(city)
-        if condition == "Sunny": # change condition name to actual name
-            name = city.replace("/", "_")
-            name = name +"_"+condition
-            print(name)
-            web_screenshot(path, name)
-        elif condition == "Foggy":  # change condition name to actual name
+        # if condition == "A Few Clouds": # change condition name to actual name
+        #     name = city.replace("/", "_")
+        #     name = name +"_"+condition
+        #     print(name)
+        #     web_screenshot(path, name)
+        if condition == "Foggy":  # change condition name to actual name
+            fogcity.append(city)
             name = city.replace("/", "_")
             name = "C://Data/dehaze/CustomData/"+name +"_"+condition
-            print(name)
             web_screenshot(path, name)
 
+    
 

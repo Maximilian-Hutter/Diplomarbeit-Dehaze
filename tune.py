@@ -20,9 +20,9 @@ def objective(trial):
               "num_mhablock":trial.suggest_int("num_mhablock", 4,9),
               "num_mhac":trial.suggest_int("num_mhac", 4, 9),
               "down_deep":trial.suggest_categorical("down_deep", [False,True]),
-              "lr":trial.suggest_float('learning_rate', 1e-6, 1e-1, log=True),
-              "beta1":trial.suggest_float("beta1", 0.85, 1),
-              "beta2":trial.suggest_float("beta2", 0.9, 1),
+            #   "lr":trial.suggest_float('learning_rate', 1e-6, 1e-1, log=True),
+            #   "beta1":trial.suggest_float("beta1", 0.85, 1),
+            #   "beta2":trial.suggest_float("beta2", 0.9, 1),
               "gen_lambda":trial.suggest_float("gen_lambda", 0.1, 1, step=0.1),
               "pseudo_lambda":trial.suggest_float("pseudo_lambda", 0.1, 1, step=0.1),
               "pseudo_alpha":trial.suggest_float("pseudo_lambda", 0.1, 1, step=0.1),
@@ -60,12 +60,12 @@ def objective(trial):
     process_time = (end_time-start_time) / testloader.__len__()
 
     print(accuracy)
-    parameter = ((accuracy + 1) / (5 * process_time)) * size_weight
+    parameter = (accuracy + 1) * size_weight
 
     return parameter
 
 study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
-study.optimize(objective, timeout=20000)
+study.optimize(objective, timeout=39000)
 
 best_trial = study.best_trial
 

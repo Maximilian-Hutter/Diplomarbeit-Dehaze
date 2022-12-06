@@ -19,7 +19,7 @@ hparams = {
     "lr": 8.214e-06,
     "beta1": 0.9595,
     "beta2": 0.9901,
-    "mhac_filter": 32,  # 256
+    "mhac_filter": 32,  # 2561
     "mha_filter": 16,    #16
     "num_mhablock": 8,  # 8
     "num_mhac": 5, # 10
