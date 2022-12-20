@@ -11,7 +11,7 @@ import torchvision
 from params import hparams
 
 parser = argparse.ArgumentParser(description='PyTorch ESRGANplus')
-parser.add_argument('--modelpath', type=str, default="weights/6nh_haze_Dehaze.pth", help=("path to the model .pth files"))
+parser.add_argument('--modelpath', type=str, default="weights/9cityscapes_Dehaze.pth", help=("path to the model .pth files"))
 parser.add_argument('--inferencepath', type=str, default='C:/Data/dehaze/inference/', help=("Path to image folder"))
 parser.add_argument('--imagename', type=str, default='foggy.jpg', help=("filename of the image"))
 parser.add_argument('--gpu_mode', type=bool, default=True, help=('enable cuda'))
@@ -55,15 +55,17 @@ if __name__ == '__main__':
     transform = T.ToPILImage()
     image = image.to(torch.device('cuda'))
     times = []
-
+    allproctime = 0
+    out, pseudo = model(image)
     for i in range(100):
         start = time.time()
         out, pseudo = model(image)
         end = time.time()
         proctime = round(end -start, 4)
-        print(proctime)
+        allproctime += proctime
 
-
+    times = allproctime/100
+    print(times)
     out = transform(out.squeeze(0))
     out.save('results/no_fog.png')
     pseudo = transform(pseudo.squeeze(0))

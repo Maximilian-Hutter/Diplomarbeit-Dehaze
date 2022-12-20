@@ -77,13 +77,13 @@ class Train():
                 myutils.checkpointGenerate(epoch, self.hparams, self.Net, datasetname)
 
 
-        epoch_time = time.time() - epoch_time 
-        Accuracy = 100*train_acc / len(dataloader)
-        self.writer.add_scalar('loss', epoch_loss, global_step=epoch)
-        self.writer.add_scalar('accuracy',Accuracy, global_step=epoch)
-        print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds".format(epoch, ((epoch_loss/2) / len(dataloader)), Accuracy, epoch_time))
-        print("\n")
-        epoch_time = time.time()
+            epoch_time = time.time() - epoch_time 
+            Accuracy = 100*train_acc / len(dataloader)
+            self.writer.add_scalar('loss', epoch_loss, global_step=epoch)
+            self.writer.add_scalar('accuracy',Accuracy, global_step=epoch)
+            print("===> Epoch {} Complete: Avg. loss: {:.4f} Accuracy {}, Epoch Time: {:.3f} seconds".format(epoch, ((epoch_loss/2) / len(dataloader)), Accuracy, epoch_time))
+            print("\n")
+            epoch_time = time.time()
 
 def sparse_training(Net, optimizer, dataloader, criterion, params, scaler):
         epoch_loss = 0

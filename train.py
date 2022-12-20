@@ -66,10 +66,10 @@ if __name__ == '__main__':
     star_n_iter = 0
     start_epoch = 0
     if hparams["resume"]:
-        checkpoint = torch.load(hparams["save_folder"]) ## look at what to load
-        start_epoch = checkpoint['epoch']
-        start_n_iter = checkpoint['n_iter']
-        optimizer.load_state_dict(checkpoint['optim'])
+        checkpoint = torch.load(hparams["resume_train"]) ## look at what to load
+        #start_epoch = checkpoint['epoch']
+        #start_n_iter = checkpoint['n_iter']
+        #optimizer.load_state_dict(checkpoint['optim'])
         print("last checkpoint restored")
 
 
@@ -85,9 +85,9 @@ if __name__ == '__main__':
 
     training = Train(hparams, Net, optimizer, criterion)
 
-    training.train(dataloader_nh_haze, "nh_haze", hparams["epochs_nh_haze"])
+    #training.train(dataloader_nh_haze, "nh_haze", hparams["epochs_nh_haze"])
 
-    training.train(dataloader_o_haze, "o_haze", hparams["epochs_o_haze"])
+    #training.train(dataloader_o_haze, "o_haze", hparams["epochs_o_haze"])
 
     training.train(dataloader_cityscapes, "cityscapes", hparams["epochs_cityscapes"])
 
