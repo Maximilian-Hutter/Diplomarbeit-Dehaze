@@ -4,6 +4,7 @@ import requests
 from selenium import webdriver
 from time import sleep
 from selenium.webdriver.firefox.options import Options
+import os
 
 picture_number = 20
 options = Options()
@@ -13,9 +14,9 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
  
  
-def weather(city):
+def weather(path):
     res = requests.get(
-        f'https://www.earthcam.com/world/{city}', headers=headers)
+        path, headers=headers)
     soup = BeautifulSoup(res.text, 'html.parser')
     condition = soup.find_all(id="conditionVals")[0].getText()
     visibility = soup.find_all(id="visibleVals")[0].getText()
@@ -37,25 +38,25 @@ def web_screenshot(path, filename):
 
     for num in range(picture_number):
         sleep(20)
-        driver.get_screenshot_as_file(filename +"_"+str(num) +".png")
+        driver.get_screenshot_as_file(filename +str(num) +".png")
 
     driver.quit()
 
 if __name__ == "__main__":
     
     cities = ["ireland/dublin/",
-              "usa/missouri/stlouis/",
+              #"usa/missouri/stlouis/",
               "virginislands/stthomas/",
               "georgia/tbilisi/",
               "france/corsica/",
-              "costarics/lafortuna/",
+              "costarica/lafortuna/",
               "canada/ontario/whitney/",
               "canada/alberta/edmonton/",
               "canada/toronto/cntower/",
               "hungary/budapest/",
-              "israel/haifa/",
-              "israel/jerusalem/",
-              "russia/moscow/",
+              #"israel/haifa/",
+              #"israel/jerusalem/",
+              #"russia/moscow/",
               "spain/mallorca/",
               "usa/alaska/sitka/",
               "usa/arizona/sedona/sevenarches/",
@@ -85,10 +86,10 @@ if __name__ == "__main__":
               "usa/montana/bigsky/",
               "usa/newhampshire/brettonwoods/",
               "usa/newyork/skyline/",
-              "usa/newyork/weehawken/",
+              #"usa/newyork/weehawken/",
               "usa/newmexico/ruidoso/",
               "usa/newyork/brooklynbridge/",
-              "usa/newyork/statueofliberty/",
+              #"usa/newyork/statueofliberty/",
               "usa/newyork/empirestatebuilding/",
               "usa/newyork/highline/",
               "usa/newyork/midtown/skyline/",
@@ -121,21 +122,74 @@ if __name__ == "__main__":
               "usa/wyoming/jackson/"
               ]
 
-    fogcity = []
-    for city in cities:
-        path = "https://www.earthcam.com/world/" + city
+    for i in range(28):
+        fogcity = []
+        for city in cities:
+            usa = city.split("/")[0]
+            if not usa == "usa":
+                path = "https://www.earthcam.com/world/" + city
+            else: path = "https://www.earthcam.com/" + city
 
-        condition = weather(city)
-        # if condition == "A Few Clouds": # change condition name to actual name
-        #     name = city.replace("/", "_")
-        #     name = name +"_"+condition
-        #     print(name)
-        #     web_screenshot(path, name)
-        if condition == "Foggy":  # change condition name to actual name
-            fogcity.append(city)
-            name = city.replace("/", "_")
-            name = "C://Data/dehaze/CustomData/"+name +"_"+condition
-            web_screenshot(path, name)
+            condition = None
+            try:
+                condition = weather(path)
+            except:
+                print(path + " not available")
+                print("\n")
 
-    
+            #condition = weather(city)
+            #print(condition)
+            
+
+
+            if condition == "A Few Clouds":  # names are Mist (small) haze(medium) Fog(max) A Few Clouds (gt)
+                fogcity.append(city)
+                name = city.replace("/", "_")
+                name = "C://Data/dehaze/CustomData/"+name+"/"
+                if not os.path.isdir(name):
+                    os.mkdir(name)
+                name = name +condition + "/"
+                if not os.path.isdir(name):
+                    os.mkdir(name)
+                name = name + str(i)
+                web_screenshot(path, name)
+
+            if condition == "Fog":  # names are Mist (small) haze(medium) Fog(max)
+                fogcity.append(city)
+                name = city.replace("/", "_")
+                name = "C://Data/dehaze/CustomData/"+name+"/"
+                if not os.path.isdir(name):
+                    os.mkdir(name)
+                name = name +condition + "/"
+                if not os.path.isdir(name):
+                    os.mkdir(name)
+                name = name + str(i)
+                web_screenshot(path, name)
+
+            if condition == "Mist":  # names are Mist (small) haze(medium) Fog(max)
+                fogcity.append(city)
+                name = city.replace("/", "_")
+                name = "C://Data/dehaze/CustomData/"+name+"/"
+                if not os.path.isdir(name):
+                    os.mkdir(name)
+                name = name +condition + "/"
+                if not os.path.isdir(name):
+                    os.mkdir(name)
+                name = name + str(i)
+                web_screenshot(path, name)
+
+            if condition == "Haze":  # names are Mist (small) haze(medium) Fog(max)
+                fogcity.append(city)
+                name = city.replace("/", "_")
+                name = "C://Data/dehaze/CustomData/"+name+"/"
+                if not os.path.isdir(name):
+                    os.mkdir(name)
+                name = name +condition + "/"
+                if not os.path.isdir(name):
+                    os.mkdir(name)
+                name = name + str(i)
+                web_screenshot(path, name)
+        hour = 3600
+        sleep(hour * 6)
+
 

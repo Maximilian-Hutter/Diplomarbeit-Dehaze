@@ -715,3 +715,293 @@ JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221130
 JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221130, line 33: ReferenceError: google is not defined
 1669976707997	Marionette	INFO	Stopped listening on port 56277
 JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670333345586	geckodriver	INFO	Listening on 127.0.0.1:65020
+1670333348628	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "65021" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileRTcKX6"
+1670333348997	Marionette	INFO	Marionette enabled
+1670333349003	Marionette	INFO	Listening on port 65030
+Read port: 65030
+WebDriver BiDi listening on ws://127.0.0.1:65021
+1670333349145	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileRTcKX6\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:65021/devtools/browser/0afa2dec-4f54-428f-ba51-7dd1ff38b5f2
+JavaScript warning: moz-extension://6d967154-7a5b-44c2-8d21-9398af3f4ce3/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 482ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=2d6deb47463aff70d5be5c675f9f193e, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670333370696	Marionette	INFO	Stopped listening on port 65030
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1670333653001	geckodriver	INFO	Listening on 127.0.0.1:58741
+1670333656063	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "58742" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileZitHoP"
+1670333656412	Marionette	INFO	Marionette enabled
+1670333656417	Marionette	INFO	Listening on port 58751
+WebDriver BiDi listening on ws://127.0.0.1:58742
+Read port: 58751
+1670333656577	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileZitHoP\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:58742/devtools/browser/cecb8ac2-c995-472a-a6ce-bffd89dc2bad
+JavaScript warning: moz-extension://33e34deb-e944-42a5-b329-3e9fe4dc69a9/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=2d6deb47463aff70d5be5c675f9f193e, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670333673582	Marionette	INFO	Stopped listening on port 58751
+1670333720943	geckodriver	INFO	Listening on 127.0.0.1:58940
+1670333723983	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "58941" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileq7qcud"
+1670333724330	Marionette	INFO	Marionette enabled
+1670333724335	Marionette	INFO	Listening on port 58950
+Read port: 58950
+WebDriver BiDi listening on ws://127.0.0.1:58941
+1670333724496	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileq7qcud\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:58941/devtools/browser/35bc6e30-b6a8-4584-a234-4b8ca126fce2
+JavaScript warning: moz-extension://9f2201b4-1b9f-41e3-8a93-fd4f0906cc87/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=2d6deb47463aff70d5be5c675f9f193e, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+1670334136850	Marionette	INFO	Stopped listening on port 58950
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670335360778	geckodriver	INFO	Listening on 127.0.0.1:61601
+1670335363814	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "61602" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofile4ZHqPk"
+1670335364242	Marionette	INFO	Marionette enabled
+1670335364247	Marionette	INFO	Listening on port 61611
+Read port: 61611
+WebDriver BiDi listening on ws://127.0.0.1:61602
+1670335364426	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofile4ZHqPk\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:61602/devtools/browser/8b96faf6-9947-4a88-9e3a-f33672aeb07c
+JavaScript warning: moz-extension://c9e55d43-79ef-4e47-af96-dddd6a22f0aa/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=609491c8c269a3978851b3b66b6716e8, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670335408687	Marionette	INFO	Stopped listening on port 61611
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1670335511407	geckodriver	INFO	Listening on 127.0.0.1:61775
+1670335514461	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "61776" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileYWF4bB"
+1670335514806	Marionette	INFO	Marionette enabled
+1670335514810	Marionette	INFO	Listening on port 61785
+WebDriver BiDi listening on ws://127.0.0.1:61776
+Read port: 61785
+1670335515049	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileYWF4bB\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:61776/devtools/browser/80d95c56-a3d7-46ed-ab1f-bbc2f26ff088
+JavaScript warning: moz-extension://ccd43656-6e7f-4e7a-8de5-f01e544e1052/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 2ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=609491c8c269a3978851b3b66b6716e8, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670335553299	Marionette	INFO	Stopped listening on port 61785
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1670335853755	geckodriver	INFO	Listening on 127.0.0.1:62004
+1670335856814	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "62005" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofile6Qr6Dy"
+1670335857168	Marionette	INFO	Marionette enabled
+1670335857174	Marionette	INFO	Listening on port 62015
+Read port: 62015
+WebDriver BiDi listening on ws://127.0.0.1:62005
+1670335857322	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofile6Qr6Dy\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:62005/devtools/browser/7e214e92-9dee-4139-a0b8-a26a449f90e6
+JavaScript warning: moz-extension://7d78fbc9-9d9b-4d08-8b66-24563cff609e/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=609491c8c269a3978851b3b66b6716e8, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670335890295	Marionette	INFO	Stopped listening on port 62015
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1670335904906	geckodriver	INFO	Listening on 127.0.0.1:62094
+1670335907960	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "62095" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileK1ShZp"
+1670335908377	Marionette	INFO	Marionette enabled
+1670335908382	Marionette	INFO	Listening on port 62104
+Read port: 62104
+WebDriver BiDi listening on ws://127.0.0.1:62095
+1670335908542	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileK1ShZp\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:62095/devtools/browser/bc37110d-bfd9-46fb-ac9d-452016274f28
+JavaScript warning: moz-extension://d8401b36-4ac8-41e1-9fdd-916026801d62/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=609491c8c269a3978851b3b66b6716e8, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670335925303	Marionette	INFO	Stopped listening on port 62104
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1670336398347	geckodriver	INFO	Listening on 127.0.0.1:62631
+1670336401399	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "62632" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofile1l2PGN"
+1670336401751	Marionette	INFO	Marionette enabled
+1670336401755	Marionette	INFO	Listening on port 62641
+Read port: 62641
+WebDriver BiDi listening on ws://127.0.0.1:62632
+1670336401925	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofile1l2PGN\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:62632/devtools/browser/6df4ca0a-dd31-4f7f-b924-b3b6eca6b7d8
+1670336404753	Marionette	INFO	Stopped listening on port 62641
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1670336489095	geckodriver	INFO	Listening on 127.0.0.1:62698
+1670336492147	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "62699" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofilep9qwUK"
+1670336492510	Marionette	INFO	Marionette enabled
+1670336492514	Marionette	INFO	Listening on port 62708
+Read port: 62708
+WebDriver BiDi listening on ws://127.0.0.1:62699
+1670336492655	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofilep9qwUK\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:62699/devtools/browser/b1b1d3a7-a56d-4628-a72c-67ccc36932cc
+JavaScript warning: moz-extension://78d92663-9152-4c23-b431-ec8b011ba44f/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=0585a05898ee8a512553d6826197a4f4, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+1670336913130	Marionette	INFO	Stopped listening on port 62708
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670336922463	geckodriver	INFO	Listening on 127.0.0.1:59955
+1670336925510	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "59956" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileRJ75F8"
+1670336925860	Marionette	INFO	Marionette enabled
+1670336925865	Marionette	INFO	Listening on port 59966
+Read port: 59966
+WebDriver BiDi listening on ws://127.0.0.1:59956
+1670336926029	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileRJ75F8\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:59956/devtools/browser/dbdfbc21-f032-4798-ba4b-a1d393fdfc72
+JavaScript warning: moz-extension://f607d3d2-cbc2-42d9-85b8-7562304b6c65/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=0585a05898ee8a512553d6826197a4f4, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+1670337336745	Marionette	INFO	Stopped listening on port 59966
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953751
+1670337348082	geckodriver	INFO	Listening on 127.0.0.1:60081
+1670337351147	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "60082" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileLbYwgx"
+1670337351495	Marionette	INFO	Marionette enabled
+1670337351500	Marionette	INFO	Listening on port 60091
+Read port: 60091
+WebDriver BiDi listening on ws://127.0.0.1:60082
+1670337351640	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileLbYwgx\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:60082/devtools/browser/7fce9dc4-b1ce-4656-9ffb-ad71d3122952
+JavaScript warning: moz-extension://0c355f33-da89-4b83-a073-e092a043f570/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=0585a05898ee8a512553d6826197a4f4, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: , line 0: AbortError: The fetching process for the media resource was aborted by the user agent at the user's request.
+JavaScript error: , line 0: NotAllowedError: The play method is not allowed by the user agent or the platform in the current context, possibly because the user denied permission.
+1670337766931	Marionette	INFO	Stopped listening on port 60091
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953751
+1670337775463	geckodriver	INFO	Listening on 127.0.0.1:60199
+1670337778522	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "60200" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofilembgERG"
+1670337778872	Marionette	INFO	Marionette enabled
+1670337778876	Marionette	INFO	Listening on port 60209
+Read port: 60209
+WebDriver BiDi listening on ws://127.0.0.1:60200
+1670337779018	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofilembgERG\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:60200/devtools/browser/d7420c2b-208e-494a-a8bf-542f3ee4bac2
+JavaScript warning: moz-extension://cfc921e8-0994-41db-a323-fcb4857a3d38/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 2ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=88f4ae043aa7b95aad9ffb3ed70d515b, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: , line 0: AbortError: The fetching process for the media resource was aborted by the user agent at the user's request.
+JavaScript error: , line 0: NotAllowedError: The play method is not allowed by the user agent or the platform in the current context, possibly because the user denied permission.
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670338020733	Marionette	INFO	Stopped listening on port 60209
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1670338926023	geckodriver	INFO	Listening on 127.0.0.1:60477
+1670338929067	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "60478" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileNLj8Ss"
+1670338929415	Marionette	INFO	Marionette enabled
+1670338929419	Marionette	INFO	Listening on port 60487
+Read port: 60487
+WebDriver BiDi listening on ws://127.0.0.1:60478
+1670338929578	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileNLj8Ss\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:60478/devtools/browser/2a171863-afb6-4b22-8a96-f64b747de696
+JavaScript warning: moz-extension://2817d1ef-ed1f-4750-93e7-29d99cc2c783/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=31de90b9ea8cfaae61fd163d8eb1321c, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+1670339364212	Marionette	INFO	Stopped listening on port 60487
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+1670339376121	geckodriver	INFO	Listening on 127.0.0.1:60613
+1670339379169	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "60614" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofile4YqBdn"
+1670339379518	Marionette	INFO	Marionette enabled
+1670339379522	Marionette	INFO	Listening on port 60623
+Read port: 60623
+WebDriver BiDi listening on ws://127.0.0.1:60614
+1670339379663	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofile4YqBdn\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:60614/devtools/browser/b6d28160-7e1b-4a7d-bf73-d0d277216be1
+JavaScript warning: moz-extension://482bad53-5452-4648-aa03-87d8676f1f78/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=31de90b9ea8cfaae61fd163d8eb1321c, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 99: TypeError: jQuery(...)[0].player is undefined
+1670339790558	Marionette	INFO	Stopped listening on port 60623
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
+[Parent 9580, IPC I/O Parent] WARNING: file /builds/worker/checkouts/gecko/ipc/chromium/src/base/process_util_win.cc:167
+1670339800708	geckodriver	INFO	Listening on 127.0.0.1:52568
+1670339803755	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "52569" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileSksACA"
+1670339804262	Marionette	INFO	Marionette enabled
+1670339804272	Marionette	INFO	Listening on port 52578
+Read port: 52578
+WebDriver BiDi listening on ws://127.0.0.1:52569
+1670339804459	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\Redmi\\AppData\\Local\\Temp\\rust_mozprofileSksACA\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:52569/devtools/browser/cbe2564d-a87e-4c21-9201-d80371ae2d02
+JavaScript warning: moz-extension://966fb236-d632-4895-9a74-aae97fa35a65/abp-background.js, line 0: Successfully compiled asm.js code (total compilation time 1ms)
+JavaScript warning: https://static.earthcam.com/js/earthcam/halloffame/hof.v4.class.js?20221202a, line 272: unreachable code after return statement
+JavaScript warning: https://static.earthcam.com/js/earthcam/functions.ecntemplate.js?20221202a, line 31: unreachable code after return statement
+JavaScript error: https://static.earthcam.com/js/earthcam/ecnplayerhtml5/js/settingswidget.js?20221202a, line 69: TypeError: jQuery(...)[0].player is undefined
+JavaScript error: https://connect.facebook.net/en_US/sdk.js?hash=31de90b9ea8cfaae61fd163d8eb1321c, line 63: uncaught exception: Error: invalid version specified
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+JavaScript error: https://static.earthcam.com/js/videojs/videojs.ima.js?20221202a, line 33: ReferenceError: google is not defined
+1670340218321	Marionette	INFO	Stopped listening on port 52578
+JavaScript error: resource://gre/modules/ConduitsChild.jsm, line 112: Error: sendRemoveListener on closed conduit jid1-NIfFY2CA8fy1tg@jetpack.137438953739
