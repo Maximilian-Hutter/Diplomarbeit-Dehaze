@@ -6,6 +6,7 @@ from prefetch_generator import BackgroundGenerator
 import time
 import torch
 
+
 def print_size(Net):
     param_size = 0
     for param in Net.parameters():

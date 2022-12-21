@@ -5,6 +5,23 @@ from selenium import webdriver
 from time import sleep
 from selenium.webdriver.firefox.options import Options
 import os
+from datetime import date
+import time
+
+def get_time_formated():
+    currtime = time.time()
+    seconds = currtime % (24 * 3600)
+    hour = seconds // 3600
+    seconds = seconds % 3600
+    minutes = seconds // 60
+    seconds = seconds % 60
+
+    currtime = str(hour) + str(minutes) + str(int(seconds))
+    currtime = currtime.replace(".", "-")
+
+    today = date.today()
+    today = str(today) + "_" + str(currtime)
+    return today
 
 picture_number = 20
 options = Options()
@@ -122,7 +139,7 @@ if __name__ == "__main__":
               "usa/wyoming/jackson/"
               ]
 
-    for i in range(28):
+    while True:
         fogcity = []
         for city in cities:
             usa = city.split("/")[0]
@@ -137,10 +154,6 @@ if __name__ == "__main__":
                 print(path + " not available")
                 print("\n")
 
-            #condition = weather(city)
-            #print(condition)
-            
-
 
             if condition == "A Few Clouds":  # names are Mist (small) haze(medium) Fog(max) A Few Clouds (gt)
                 fogcity.append(city)
@@ -151,7 +164,7 @@ if __name__ == "__main__":
                 name = name +condition + "/"
                 if not os.path.isdir(name):
                     os.mkdir(name)
-                name = name + str(i)
+                name = name + str(get_time_formated())
                 web_screenshot(path, name)
 
             if condition == "Fog":  # names are Mist (small) haze(medium) Fog(max)
@@ -163,7 +176,7 @@ if __name__ == "__main__":
                 name = name +condition + "/"
                 if not os.path.isdir(name):
                     os.mkdir(name)
-                name = name + str(i)
+                name = name + str(get_time_formated())
                 web_screenshot(path, name)
 
             if condition == "Mist":  # names are Mist (small) haze(medium) Fog(max)
@@ -175,7 +188,7 @@ if __name__ == "__main__":
                 name = name +condition + "/"
                 if not os.path.isdir(name):
                     os.mkdir(name)
-                name = name + str(i)
+                name = name + str(get_time_formated())
                 web_screenshot(path, name)
 
             if condition == "Haze":  # names are Mist (small) haze(medium) Fog(max)
@@ -187,9 +200,7 @@ if __name__ == "__main__":
                 name = name +condition + "/"
                 if not os.path.isdir(name):
                     os.mkdir(name)
-                name = name + str(i)
+                name = name + str(get_time_formated())
                 web_screenshot(path, name)
-        hour = 3600
-        sleep(hour * 6)
 
 
