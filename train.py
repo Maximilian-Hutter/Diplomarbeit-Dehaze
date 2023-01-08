@@ -85,9 +85,9 @@ if __name__ == '__main__':
 
     training = Train(hparams, Net, optimizer, criterion)
 
-    #training.train(dataloader_nh_haze, "nh_haze", hparams["epochs_nh_haze"])
+    training.train(dataloader_nh_haze, "nh_haze", hparams["epochs_nh_haze"])
 
-    #training.train(dataloader_o_haze, "o_haze", hparams["epochs_o_haze"])
+    training.train(dataloader_o_haze, "o_haze", hparams["epochs_o_haze"])
 
     training.train(dataloader_cityscapes, "cityscapes", hparams["epochs_cityscapes"])
 

@@ -7,6 +7,7 @@ import time
 import torch
 import cv2
 
+
 def print_size(Net):
     param_size = 0
     for param in Net.parameters():
