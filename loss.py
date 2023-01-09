@@ -1,5 +1,75 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+import numpy as np
+from torchvision.transforms.functional import rgb_to_grayscale
+import scipy.stats as st
+
+
+def gauss_kernel(kernlen=21, nsig=3, channels=1):
+    interval = (2 * nsig + 1.) / (kernlen)
+    x = np.linspace(-nsig - interval / 2., nsig + interval / 2., kernlen + 1)
+    kern1d = np.diff(st.norm.cdf(x))
+    kernel_raw = np.sqrt(np.outer(kern1d, kern1d))
+    kernel = kernel_raw / kernel_raw.sum()
+    out_filter = np.array(kernel, dtype=np.float32)
+    out_filter = out_filter.reshape((kernlen, kernlen, 1, 1))
+    out_filter = np.repeat(out_filter, channels, axis=2)
+    return out_filter
+
+
+class Blur(nn.Module):
+    def __init__(self, nc):
+        super(Blur, self).__init__()
+        self.nc = nc
+        kernel = gauss_kernel(kernlen=21, nsig=3, channels=self.nc)
+        kernel = torch.from_numpy(kernel).permute(2, 3, 0, 1)
+        self.weight = nn.Parameter(data=kernel, requires_grad=False).cuda()
+
+    def forward(self, x):
+        x = x.cuda()
+        if x.size(1) != self.nc:
+            raise RuntimeError(
+                "The channel of input [%d] does not match the preset channel [%d]" % (x.size(1), self.nc))
+        x = F.conv2d(x, self.weight, stride=1, padding=10, groups=self.nc)
+        return x
+
+class GrayscaleLoss(nn.Module):
+    def __init__(self):
+        super(GrayscaleLoss, self).__init__()
+
+    def forward(self, gen, label):
+        gen = rgb_to_grayscale(torch.clone(gen))
+        label = rgb_to_grayscale(torch.clone(label))
+
+        return torch.mean(abs(gen - label))
+
+class ColorLoss(nn.Module):
+    def __init__(self):
+        super(ColorLoss, self).__init__()
+
+    def forward(self, x1, x2):
+        return torch.mean(torch.pow((x1 - x2), 2)).div(2 * x1.size()[0])
+
+
+if __name__ == '__main__':
+    cl = ColorLoss()
+
+    # rgb example
+    blur_rgb = Blur(3)
+    img_rgb1 = torch.randn(4, 3, 40, 40)
+    img_rgb2 = torch.randn(4, 3, 40, 40)
+    blur_rgb1 = blur_rgb(img_rgb1)
+    blur_rgb2 = blur_rgb(img_rgb2)
+    print(cl(blur_rgb1, blur_rgb2))
+
+    # gray example
+    blur_gray = Blur(1)
+    img_gray1 = torch.randn(4, 1, 40, 40)
+    img_gray2 = torch.randn(4, 1, 40, 40)
+    blur_gray1 = blur_gray(img_gray1)
+    blur_gray2 = blur_gray(img_gray2)
+    print(cl(blur_gray1, blur_gray2))
 
 class ChabonnierLoss(nn.Module):
     def __init__(self, eps):

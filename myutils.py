@@ -50,7 +50,10 @@ def crop_center(pil_img, crop_width, crop_height):
                          (img_height + crop_height) // 2))
 
 def save_trainimg(generated_image, epoch, name = ""):
+    
     transform = T.ToPILImage()
+    #norm = T.Normalize(mean=[-1,-1,-1],std=[2,2,2])
+    #generated_image = norm(generated_image)
     gimg = transform(generated_image.squeeze(0))
     if not os.path.isdir("trainimg"):
         os.mkdir("trainimg")

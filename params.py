@@ -1,7 +1,7 @@
 hparams = {
     "seed": 123,
     "gpus": 1,
-    "gpu_mode": True,
+    "gpu_mode": False,
     "crop_size": None,
     "resume": False,
     "train_data_path": "C:/Data/dehaze/prepared/",
@@ -11,6 +11,7 @@ hparams = {
     "epochs_cityscapes": 150,
     "batch_size": 1,
     "gen_lambda": 0.5,
+    "color_lambda": 0.5,
     "pseudo_lambda": 0.7,
     "down_deep": False,
     "threads": 0,
@@ -31,7 +32,7 @@ hparams = {
     "model_type": "Dehaze",
     "scale_factor": 1,
     "snapshots": 10,
-    "pseudo_alpha": 0.6,
-    "hazy_alpha": 0.7,
+    "pseudo_alpha": 0.8,
+    "hazy_alpha": 0.4,
     "resume_train": "./weights/9cityscapes_Dehaze.pth"
 }

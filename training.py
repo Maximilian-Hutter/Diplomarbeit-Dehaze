@@ -9,7 +9,7 @@ from torch.autograd import Variable
 from models import Dehaze
 
 class Train():
-    def __init__(self, hparams, Net, optimizer, criterion) :
+    def __init__(self, hparams, Net, optimizer, criterion, criterion2=None) :
     
         Net = Net.to(memory_format=torch.channels_last)  # faster train time with Computer vision models
         torch.autograd.profiler.emit_nvtx(enabled=False)
@@ -18,6 +18,7 @@ class Train():
         self.writer = SummaryWriter()
 
         self.criterion = criterion
+        self.criterion2 = criterion2
         self.gpus_list = range(hparams["gpus"])
         self.hparams = hparams
         self.Net = Net
@@ -49,7 +50,8 @@ class Train():
                     generated_image, pseudo = self.Net(img)
                     chabonnier_gen = self.criterion(generated_image, label)
                     chabonnier_pseudo = self.criterion(pseudo, label)
-                    loss = self.hparams["gen_lambda"] * chabonnier_gen + self.hparams["pseudo_lambda"] * chabonnier_pseudo
+                    color_loss = self.criterion2(generated_image, label)
+                    loss = self.hparams["gen_lambda"] * chabonnier_gen + self.hparams["pseudo_lambda"] * chabonnier_pseudo + self.hparams["color_lambda"] * color_loss
         
                 if self.hparams["batch_size"] == 1:
                     if i == 1:

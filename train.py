@@ -16,7 +16,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 # my imports
 import myutils
-from loss import ChabonnierLoss
+from loss import ChabonnierLoss, ColorLoss, GrayscaleLoss
 from params import hparams
 from training import Train
 
@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     print('==> Loading Datasets')
     dataloader_o_haze = DataLoader(ImageDataset(hparams["train_data_path"] + "O-Haze",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
-    dataloader_nh_haze = DataLoader(ImageDataset(hparams["train_data_path"] + "NH-Haze",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
+    dataloader_nh_haze = DataLoader(ImageDataset(hparams["train_data_path"] + "nn_test",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
     dataloader_cityscapes = DataLoader(ImageDataset(hparams["train_data_path"] + "cityscapes",size,hparams["crop_size"],hparams["scale_factor"],hparams["augment_data"]), batch_size=hparams["batch_size"], shuffle=True, num_workers=hparams["threads"])
 
     # define the Network
@@ -47,6 +47,7 @@ if __name__ == '__main__':
 
     # set criterions & optimizers
     criterion = ChabonnierLoss(eps = 1e-6)
+    color_crit = ColorLoss()
     optimizer = optim.Adam(Net.parameters(), lr=hparams["lr"], betas=(hparams["beta1"],hparams["beta2"]))
 
     cuda = hparams["gpu_mode"]
@@ -61,6 +62,7 @@ if __name__ == '__main__':
     if cuda:
         Net = Net.to(torch.device("cuda:0"))
         criterion = criterion.to(torch.device("cuda:0"))
+        color_crit = color_crit.to(torch.device("cuda:0"))
 
     # load checkpoint/load model
     star_n_iter = 0
@@ -83,7 +85,7 @@ if __name__ == '__main__':
     size_all_mb = (param_size + buffer_size) / 1024**2
     print('model size: {:.3f}MB'.format(size_all_mb))
 
-    training = Train(hparams, Net, optimizer, criterion)
+    training = Train(hparams, Net, optimizer, criterion, color_crit)
 
     training.train(dataloader_nh_haze, "nh_haze", hparams["epochs_nh_haze"])
 

@@ -2,6 +2,7 @@
 # Shallow Layers using the Large Kernel: use LKD before SHA in the MHA
 # see what happens when you reaplce the attention in CoT with the DLKCB
 from numpy import outer
+import torchvision
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -103,7 +104,9 @@ class MHA(nn.Module):
         x2 = self.dlkcb2(x)
 
         x = torch.add(x,x1)
+         
         x = torch.add(x, x2)
+         
 
         
 
@@ -111,6 +114,7 @@ class MHA(nn.Module):
         x = self.convsha(x)
         x = self.sha(x)
         x = torch.add(res,x)
+         
 
         return x
 
@@ -216,6 +220,7 @@ class AdaptiveFeatureFusion(nn.Module):
     def forward(self,x, y):
 
         x = torch.add(self.sig1(x), self.sig2(y))
+         
         
         return x
 
@@ -282,11 +287,13 @@ class Shallow(nn.Module):
         #print(x.shape)
         #print(res2.shape)
         x = torch.add(x, res2)
+         
         
         x = self.sha3(x)
         x = self.up2(x)
         #res1 = F.interpolate(res1, scale_factor=1.25)
         x = torch.add(x,res1)
+         
         x = self.sha4(x)
         shares = x
 
@@ -294,6 +301,7 @@ class Shallow(nn.Module):
 
         #res = F.interpolate(res, scale_factor=1.25)
         x = torch.add(x, res)
+         
         return x, shares
 
 class Deep(nn.Module):
@@ -369,6 +377,17 @@ class Dehaze(nn.Module):
             hazy = F.interpolate(hazy, scale_factor=self.scale_factor)
 
         x = torch.add(x, pseudo, alpha=self.pseudo_alpha)
+         
         x = torch.add(x, hazy, alpha=self.hazy_alpha)
+        x = (x + abs(x.min()))/x.max()
+        
+        x = x +1
+        x = x - x.min()
+        x = x / (x.max() - x.min())
+
+        print(x.min())
+        print(x.max())
+        # 
+        # x = torch.sigmoid(x) gets rid of artifacts but generates more fog
 
         return x, pseudo
