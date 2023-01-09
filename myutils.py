@@ -5,6 +5,7 @@ from tqdm import tqdm
 from prefetch_generator import BackgroundGenerator
 import time
 import torch
+import cv2
 
 
 def print_size(Net):
@@ -18,6 +19,22 @@ def print_size(Net):
     size_all_mb = (param_size + buffer_size) / 1024**2
     print('model size: {:.3f}MB'.format(size_all_mb))
 
+def extractFrames(pathIn, pathOut):
+    #os.mkdir(pathOut)
+    cap = cv2.VideoCapture(pathIn)
+    count = 0
+    while (cap.isOpened()):
+        # Capture frame-by-frame
+        ret, frame = cap.read()
+        if ret == True:
+            print('Read %d frame: ' % count, ret)
+            cv2.imwrite(os.path.join(pathOut, "frame{:d}.jpg".format(count)), frame)  # save frame as JPEG file
+            count += 1
+        else:
+            break
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
 
 def checkpointGenerate(epoch, hparams, Net, name = None):
     model_out_path = hparams["save_folder"]+str(epoch)+ str(name) +"_"+ hparams["model_type"]+".pth".format(epoch)
